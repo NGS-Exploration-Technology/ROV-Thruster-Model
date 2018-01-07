@@ -15,25 +15,22 @@ Ta = ones(1,n);
 dt = 0.5;
 
 %Data to fit
-k_fit = 1;
-t_fit = [0:dt:n*dt];
-T_Data=Ta(1)+(To-Ta(1))*exp(-k_fit*t_fit);
+k_Data = 1;
+t_Data = linspace(0,20,10000);
+Data=Ta(1)+(To-Ta(1))*exp(-k_Data*t_Data) + 0.01*randn(size(t_Data));
+
+t_fit = [0:dt:floor(max(t_Data)/dt)*dt];
 
 %define Fitness Function
-f = @(x)fitness_fcn_thruster_curve(x, To, Ta, dt, T_Data);
+f = @(x)fitness_fcn_thruster_curve(x, To, Ta, dt, t_Data, Data);
 
-[x fval exitflag opt_output] = fminsearch(f,[0], options)
+[x fval exitflag opt_output] = fminsearch(f,[1], options)
 
 %simulate and plot result
-k_fit = x(1);
-[t_fit, T_fit] = sim_thruster(To, Ta , k_fit, dt);
+k = x(1);
+[t_fit, T_fit] = sim_thruster(To, Ta , k, dt);
 
-%calculate fiting function
-t = linspace(min(t_fit), max(t_fit), 10000);
-k = 1;
-Ta_fit = Ta(1);
-T=Ta(1)+(To-Ta(1))*exp(-k*t);
 
 %Plot results
 figure;
-plot(t, T, t_fit, T_fit, '.k');
+plot(t_Data, Data, t_fit, T_fit, '.k');
