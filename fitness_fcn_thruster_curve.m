@@ -4,9 +4,10 @@ function mse = fitness_fcn_control_system(x, To, Ta, dt, t_data, Data);
 %
 %Change Optimization Parameters
 k = x(1);
+g = x(2);
 
 %Run Simulation
-[t_n, T_out] = sim_thruster(To, Ta , k, dt);
+[t_n, T_out] = sim_thruster(To, Ta , k, g, dt);
 
 %Interpolate data for comparison
 Data_int = interp1(t_data,Data, t_n);
