@@ -20,3 +20,4 @@
 *.mp4 -crlf -diff -merge
 *.stl -crlf -diff -merge
 *.csv -crlf -diff -merge
+*.m -crlf -diff -merge
