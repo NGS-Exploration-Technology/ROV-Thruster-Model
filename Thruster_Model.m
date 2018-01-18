@@ -1,5 +1,6 @@
-function [T, tau] = sim_thruster(To, Ta , k, g, I, v, dt)
-%SIM_THRUSTER to fit a thrust throttle curve to a model
+function [Thr, tau] = Thruster_Model(To, Ta , k, g, I, Cd, v, dt)
+%THRUSTER_MODEL time varying dynamic model of ROV thruster
+%function [T, tau] = Thruster_Model(To, Ta , k, g, I, Cd, v, dt)
 % T(t)=Ta+(To-Ta)*exp(-kt) 
 %
 %inputs:
@@ -13,8 +14,8 @@ function [T, tau] = sim_thruster(To, Ta , k, g, I, v, dt)
 %   dt = simulation time step
 %
 %outputs:
-%   T = [N] Thrust
-%   tau = [Nm] Torque
+%   Thr = [N] Output Thrust
+%   tau = [Nm] Reaction Torque
 %
 %function to approximate T(t)=Ta+(To-Ta)*exp^{-kt}  
 %
@@ -23,8 +24,8 @@ function [T, tau] = sim_thruster(To, Ta , k, g, I, v, dt)
 %
 %http://www.ugrad.math.ubc.ca/coursedoc/math100/notes/diffeqs/cool.html
 
-dT = -k*(To-g*Ta);
-T = To+dT*dt;
-tau_inertial = I*(dT/dt);
-tau_viscous = Cd*T;
+dThr = -k*(To-g*Ta);
+Thr = To+dThr*dt;
+tau_inertial = I*(dThr/dt);
+tau_viscous = Cd*Thr;
 tau = tau_inertial+tau_viscous;

@@ -1,13 +1,16 @@
-function mse = fitness_fcn_control_system(x, To, Ta, dt, t_data, Data);
+function mse = fitness_fcn_control_system(x, To, Ta, dt, t_data, Data)
 %FITNESS_FCN_CONTROL_SYSTEM for plotting
 %function mse = fitness_fcn_control_system(x,y,Control_Params, Model_Params);
 %
 %Change Optimization Parameters
 k = x(1);
 g = x(2);
+I = 0;
+Cd = 0;
+v = 0;
 
 %Run Simulation
-[t_n, T_out] = sim_thruster(To, Ta , k, g, dt);
+[t_n, T_out] = sim_thruster(To, Ta , k, g, I, Cd, v, dt);
 
 %Interpolate data for comparison
 Data_int = interp1(t_data,Data, t_n);

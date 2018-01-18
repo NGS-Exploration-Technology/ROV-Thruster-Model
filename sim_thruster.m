@@ -1,4 +1,4 @@
-function [t_n,T_out] = sim_thruster(To, Ta , k, g, dt)
+function [t_n,T_out] = sim_thruster(To, Ta , k, g, I, Cd, v, dt)
 %SIM_THRUSTER to fit a thrust throttle curve to a model
 % T(t)=Ta+(To-Ta)*exp(-kt) 
 %
@@ -6,7 +6,11 @@ function [t_n,T_out] = sim_thruster(To, Ta , k, g, dt)
 %   To = [N] Initial thrust
 %   Ta = [N] Thrust Commanded (Throttle) Vector [N]
 %   k = rate parameter
-%   n = 
+%   g = [N/Throttle] throttle gain parameter
+%   I = Moment of inertia for the rotating machinery
+%   Cd = Coefficient of rotational drag as a function of thrust
+%   v = current flow velocity over the thruster
+%   dt = simulation time step
 %
 %outputs:
 %
@@ -25,7 +29,6 @@ T_out = zeros(size(t_n));
 index = 1;
 T_out(index) = To;
 while(t_n(index)<max(t_n))
-    dT(index) = -k*(T_out(index)-g*Ta(index));
-    T_out(index+1) = T_out(index)+dT(index)*dt;
+    [T_out(index+1), tau(index+1)] = Thruster_Model(T_out(index), Ta(index), k, g, I, Cd, v, dt);
     index = index + 1;
 end
