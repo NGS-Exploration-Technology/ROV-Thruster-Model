@@ -9,10 +9,10 @@ options.OutputFcn = [];
 options.PlotFcns = {[@optimplotfval],[ @optimplotx]};
 
 %Set up model params
-n = 100;
+n = 4000;
 To = 0;
 Ta = ones(1,n);
-dt = 0.01;
+dt = 0.001;
 
 %Data to fit (Newton's law of cooling)
 %Ta_Data = 20;
@@ -21,10 +21,10 @@ dt = 0.01;
 %Data=Ta_Data+(To-Ta_Data)*exp(-k_Data*t_Data) + 0.1*randn(size(t_Data));
 
 %Data to fit (Charge on a capacitor)
-t = linspace(0,2,10000); %[s]
-C = 1E-6; %[F]
+t = linspace(0,5,10000); %[s]
+C = 2E-6; %[F]
 R = 1E5; %[Ohms]
-Vb = 1E6; %[V]
+Vb = 0.5E6; %[V]
 Q = C*Vb*(1-exp(-t/(R*C))) + 1E-8*randn(size(t));
 t_Data = t;
 Data = Q;
