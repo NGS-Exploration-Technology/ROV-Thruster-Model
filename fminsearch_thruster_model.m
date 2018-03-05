@@ -9,9 +9,9 @@ options.OutputFcn = [];
 options.PlotFcns = {[@optimplotfval],[ @optimplotx]};
 
 %Set up model params
-n = 4000;
-To = 0;
-Ta = ones(1,n);
+n_samples = 4000;
+Throttle = ones(1,n_samples);
+Va = zeros(size(Throttle));
 dt = 0.001;
 
 %Data to fit (Newton's law of cooling)
@@ -27,31 +27,33 @@ R = 1E5; %[Ohms]
 Vb = 0.5E6; %[V]
 Q = C*Vb*(1-exp(-t/(R*C))) + 1E-8*randn(size(t));
 t_Data = t;
-Data = Q;
-
-%Data to fit (Second order system)
-%t = linspace(0,2,10000); %[s]
-%c1 = 1;
-%r1 = 1;
-%c2 = 1;
-%r2 = -2;
-%t_Data = t;
-%Data = c1*exp(r1*t)+c2*exp(r2*t);
+T_Data = Q;
+Q_Data = zeros(size(T_Data));
 
 
 %define Fitness Function
-f = @(x)fitness_fcn_thruster_curve(x, To, Ta, dt, t_Data, Data);
+%f = @(x)fitness_fcn_thruster_curve(x, To, Ta, dt, t_Data, Data);
+f = @(x)fitness_fcn_thruster_curve(x, Va, Throttle, dt, t_Data, T_Data, Q_Data)
 
-[x fval exitflag opt_output] = fminsearch(f,[2 0], options)
+[x fval exitflag opt_output] = fminsearch(f,[1 1 1 1 1 1], options)
 
 %simulate and plot result
-k = x(1);
-g = x(2);
-I = 0;
-Cd = 0;
-v = 0;
-[t_fit, T_fit] = sim_thruster(To, Ta , k, g, I, Cd, v, dt);
+Thruster_Params.g = x(1); %[rps/throttle]
+Thruster_Params.k = x(2); %[rate parameter]
+Thruster_Params.D = 0.05; %[m] propellor diameter
+Thruster_Params.alpha1 = x(3);
+Thruster_Params.alpha2 = x(4);
+Thruster_Params.beta1 = x(5);
+Thruster_Params.beta2 = x(6);
+
+%Run Simulation
+[t_fit,T_fit, Q_fit] = sim_thruster(Va, Throttle , rho, Thruster_Params, dt);
 
 %Plot results
 figure;
-plot(t_Data, Data, t_fit, T_fit, '.k');
+subplot(2,1,1);
+plot(t_Data, T_Data, t_fit, T_fit, '.k'); 
+title('Thrust versus Time'); xlabel('Time [s]'); ylabel('Force [N]');
+subplot(2,1,2);
+plot(t_Data,Q_Data, t_fit, Q_fit, '.k');
+title('Torque versus Time'); ylabel('Time [s]'); ylabel('Torque [Nm]');

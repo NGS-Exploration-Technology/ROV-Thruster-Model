@@ -1,21 +1,20 @@
-function [Thr, tau] = Thruster_Model(To, Ta , k, g, I, Cd, v, dt)
+function [n, T, Q] = Thruster_Model(Va, n0, Throttle , rho, Thruster_Params, dt)
 %THRUSTER_MODEL time varying dynamic model of ROV thruster
-%function [T, tau] = Thruster_Model(To, Ta , k, g, I, Cd, v, dt)
+%function [n, T, Q] = Thruster_Model(Va, n0, Throttle , rho, Thruster_Params, dt)
 % T(t)=Ta+(To-Ta)*exp(-kt) 
 %
 %inputs:
-%   To = [N] Current thrust
-%   Ta = [N] Thrust Commanded (Throttle) Vector [N]
-%   k = rate parameter
-%   g = [N/Throttle] throttle gain parameter
-%   I = Moment of inertia for the rotating machinery
-%   Cd = Coefficient of rotational drag as a function of thrust
-%   v = current flow velocity over the thruster
+%   Va = [m/s] Flow velocity at prop
+%   n0 = [rps] current revolutions per second
+%   Throttle = current throttle (-1 to 1)
+%   rho = density of seawater
+%   Thruster_Params = parameters of the thruster model
 %   dt = simulation time step
 %
 %outputs:
-%   Thr = [N] Output Thrust
-%   tau = [Nm] Reaction Torque
+%   n = [rps] thruster rate
+%   T = [N] Output Thrust
+%   Q = [Nm] Reaction Torque
 %
 %function to approximate T(t)=Ta+(To-Ta)*exp^{-kt}  
 %
@@ -24,8 +23,24 @@ function [Thr, tau] = Thruster_Model(To, Ta , k, g, I, Cd, v, dt)
 %
 %http://www.ugrad.math.ubc.ca/coursedoc/math100/notes/diffeqs/cool.html
 
-dThr = -k*(To-g*Ta);
-Thr = To+dThr*dt;
-tau_inertial = I*(dThr/dt);
-tau_viscous = Cd*Thr;
-tau = tau_inertial+tau_viscous;
+%Populate thruster params
+g = Thruster_Params.g; %[rps/throttle]
+k = Thruster_Params.k; %[rate parameter]
+D = Thruster_Params.D; %[m] propellor diameter
+alpha1 = Thruster_Params.alpha1;
+alpha2 = Thruster_Params.alpha2;
+beta1 = Thruster_Params.beta1;
+beta2 = Thruster_Params.beta2;
+
+%Update thruster rate
+n_command = g*Throttle;
+n = -k*(n0-g*n_command);
+
+%Calculate Advance Coefficient
+J0 = Va/(n*D);
+
+%Calculate Thrust
+T = rho*D^4*(alpha1+alpha2*J0)*abs(n)*n; %[N] thrust
+
+%Calculate Torque
+Q = rho*D^5*(beta1+beta2*J0)*abs(n)*n; %[Nm] torque
