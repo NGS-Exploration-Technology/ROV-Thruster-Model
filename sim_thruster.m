@@ -27,11 +27,7 @@ n = zeros(size(t_n));
 T = zeros(size(t_n));
 Q = zeros(size(t_n));
 index = 1;
-n(index) = 0;
-T(index) = 0;
-Q(index) = 0;
 while(t_n(index)<max(t_n))
-    keyboard;
-    [n(index+1), T(index+1), Q(index+1)] = Thruster_Model(Va, n(index), Throttle(index), rho, Thruster_Params, dt)
+    [n(index+1), T(index+1), Q(index+1)] = Thruster_Model(Va(index), n(index), Throttle(index), rho, Thruster_Params, dt);
     index = index + 1;
 end
