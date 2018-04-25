@@ -3,9 +3,9 @@ function loss = fitness_fcn_thruster_curve(x, Va, Throttle, dt, t_data, T_Data, 
 %function loss = fitness_fcn_thruster_curve(x, Va, Throttle, dt, t_data, T_Data, Q_data)
 %
 %Change Optimization Parameters
-Thruster_Params.g = 1; %[rps/throttle]
+Thruster_Params.g = 32.5; %[rps/throttle]
 Thruster_Params.k = x(1); %[rate parameter]
-Thruster_Params.D = 0.05; %[m] propellor diameter
+Thruster_Params.D = 0.1151; %[m] propellor diameter
 Thruster_Params.alpha1 = x(2);
 Thruster_Params.alpha2 = x(3);
 Thruster_Params.beta1 = x(4);
@@ -14,7 +14,7 @@ Thruster_Params.beta2 = x(5);
 rho = 1027; %[kg/m^3] Density of seawater
 
 %Run Simulation
-[t_n,T_out, Q_out] = sim_thruster(Va, Throttle , rho, Thruster_Params, dt);
+[t_n,T_out, Q_out, n_out] = sim_thruster(Va, Throttle , rho, Thruster_Params, dt);
 
 %Interpolate thrust data and calculate mse
 T_Data_int = interp1(t_data,T_Data, t_n);

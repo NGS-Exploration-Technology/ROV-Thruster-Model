@@ -1,4 +1,4 @@
-function [t_n,T, Q] = sim_thruster(Va, Throttle , rho, Thruster_Params, dt)
+function [t_n,T, Q, n] = sim_thruster(Va, Throttle , rho, Thruster_Params, dt)
 %SIM_THRUSTER to fit a thrust throttle curve to a model
 %function [t_n,T, Q] = sim_thruster(Va, Throttle , rho, Thruster_Params, dt)
 % T(t)=Ta+(To-Ta)*exp(-kt) 

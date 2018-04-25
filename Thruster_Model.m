@@ -34,10 +34,15 @@ beta2 = Thruster_Params.beta2;
 
 %Update thruster rate
 n_command = g*Throttle;
-n = -k*(n0-g*n_command);
+d_n = -k*(n0-n_command);
+n = n0+d_n*dt;
 
 %Calculate Advance Coefficient
-J0 = Va/(n*D);
+%if (n==0) 
+%    n = 1E-100;
+%end
+%J0 = Va/(n*D);
+J0 = 0; %Assume the flow velocity is zero
 
 %Calculate Thrust
 T = rho*D^4*(alpha1+alpha2*J0)*abs(n)*n; %[N] thrust
