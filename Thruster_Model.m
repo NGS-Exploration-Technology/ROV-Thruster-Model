@@ -1,4 +1,4 @@
-function [n, T, Q] = Thruster_Model(Va, n0, Throttle , rho, Thruster_Params, dt)
+function [n, T, Q] = Thruster_Model(Va, n0, Throttle , rho, Thruster_Config, dt)
 %THRUSTER_MODEL time varying dynamic model of ROV thruster
 %function [n, T, Q] = Thruster_Model(Va, n0, Throttle , rho, Thruster_Params, dt)
 % T(t)=Ta+(To-Ta)*exp(-kt) 
@@ -24,13 +24,13 @@ function [n, T, Q] = Thruster_Model(Va, n0, Throttle , rho, Thruster_Params, dt)
 %http://www.ugrad.math.ubc.ca/coursedoc/math100/notes/diffeqs/cool.html
 
 %Populate thruster params
-g = Thruster_Params.g; %[rps/throttle]
-k = Thruster_Params.k; %[rate parameter]
-D = Thruster_Params.D; %[m] propellor diameter
-alpha1 = Thruster_Params.alpha1;
-alpha2 = Thruster_Params.alpha2;
-beta1 = Thruster_Params.beta1;
-beta2 = Thruster_Params.beta2;
+g = Thruster_Config.g; %[rps/throttle]
+k = Thruster_Config.k; %[rate parameter]
+D = Thruster_Config.D; %[m] propellor diameter
+alpha1 = Thruster_Config.alpha1;
+alpha2 = Thruster_Config.alpha2;
+beta1 = Thruster_Config.beta1;
+beta2 = Thruster_Config.beta2;
 
 %Update thruster rate
 n_command = g*Throttle;
@@ -48,4 +48,8 @@ J0 = 0; %Assume the flow velocity is zero
 T = rho*D^4*(alpha1+alpha2*J0)*abs(n)*n; %[N] thrust
 
 %Calculate Torque
-Q = rho*D^5*(beta1+beta2*J0)*abs(n)*n; %[Nm] torque
+if Thruster_Config.RH_prop
+    Q = rho*D^5*(beta1+beta2*J0)*abs(n)*n; %[Nm] RH prop torque
+else
+    Q = -rho*D^5*(beta1+beta2*J0)*abs(n)*n; %[Nm] LH prop torque
+end

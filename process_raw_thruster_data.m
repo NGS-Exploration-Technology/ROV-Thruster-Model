@@ -11,7 +11,8 @@ Fx_raw = -A(:,14);
 Fx_movmean = movmean(Fx_raw,20);
 Fx = Fx_movmean(6442:11441);
 
-Mx_raw = -A(:,17);
+Mx_raw = -A(:,17); %RH Thruster Data
+%Mx_raw = A(:,17); %LH Thruster Data
 Mx_movmean = movmean(Mx_raw,20);
 Mx = Mx_movmean(6442:11441);
 
