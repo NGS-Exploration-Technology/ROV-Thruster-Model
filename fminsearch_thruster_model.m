@@ -37,17 +37,20 @@ Q_Data = Mx;
 %f = @(x)fitness_fcn_thruster_curve(x, To, Ta, dt, t_Data, Data);
 f = @(x)fitness_fcn_thruster_curve(x, Va, Throttle, dt, t_Data, T_Data, Q_Data);
 
-[x fval exitflag opt_output] = fminsearch(f,[ 1 1 1 1], options)
+[x fval exitflag opt_output] = fminsearch(f,[ 1 1 1 1 1 1], options)
 
 %simulate and plot result
 Thruster_Config.g = 32.5; %[rps/throttle]
-Thruster_Config.k = x(1); %[rate parameter]
+%Thruster_Config.k = x(1); %[rate parameter]
+Thruster_Config.k1 = x(1); %[rate parameter]
+Thruster_Config.k2 = x(2); %[rate parameter]
+Thruster_Config.kt = x(3); %[rate parameter]
 Thruster_Config.D = 0.1151; %[m] propellor diameter
-Thruster_Config.alpha1 = x(2);
+Thruster_Config.alpha1 = x(4);
 Thruster_Config.alpha2 = 0;
-Thruster_Config.beta1 = abs(x(3));
+Thruster_Config.beta1 = abs(x(5));
 Thruster_Config.beta2 = 0;
-Thruster_Config.RH_prop = (x(4)>0); %1 for RH, 0 for LH
+Thruster_Config.RH_prop = (x(6)>0); %1 for RH, 0 for LH
 rho = 1027;
 
 %Run Simulation

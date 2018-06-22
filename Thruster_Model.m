@@ -25,7 +25,10 @@ function [n, T, Q] = Thruster_Model(Va, n0, Throttle , rho, Thruster_Config, dt)
 
 %Populate thruster params
 g = Thruster_Config.g; %[rps/throttle]
-k = Thruster_Config.k; %[rate parameter]
+%k = Thruster_Config.k; %[rate parameter]
+k1 = Thruster_Config.k1; %[rate parameter]
+k2 = Thruster_Config.k2; %[rate parameter]
+kt = Thruster_Config.kt; %[rate parameter]
 D = Thruster_Config.D; %[m] propellor diameter
 alpha1 = Thruster_Config.alpha1;
 alpha2 = Thruster_Config.alpha2;
@@ -34,7 +37,8 @@ beta2 = Thruster_Config.beta2;
 
 %Update thruster rate
 n_command = g*Throttle;
-d_n = -k*(n0-n_command);
+% d_n = -k*(n0-n_command);
+d_n = -k1*n0-k2*n0*abs(n0)-kt*n_command;
 n = n0+d_n*dt;
 
 %Calculate Advance Coefficient
