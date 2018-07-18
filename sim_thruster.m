@@ -1,4 +1,4 @@
-function [t_n,T, Q, n] = sim_thruster(Va, Throttle , rho, Thruster_Params, dt)
+function [t_n, T, Q, n, Va] = sim_thruster(Va, Throttle , rho, Thruster_Params, dt)
 %SIM_THRUSTER to fit a thrust throttle curve to a model
 %function [t_n,T, Q] = sim_thruster(Va, Throttle , rho, Thruster_Params, dt)
 % T(t)=Ta+(To-Ta)*exp(-kt) 
@@ -22,12 +22,12 @@ function [t_n,T, Q, n] = sim_thruster(Va, Throttle , rho, Thruster_Params, dt)
 %set parameters
 
 n_samples = length(Va);
-t_n = [0:dt:n_samples*dt];
+t_n = 0:dt:(n_samples*dt-dt);
 n = zeros(size(t_n));
 T = zeros(size(t_n));
 Q = zeros(size(t_n));
 index = 1;
 while(t_n(index)<max(t_n))
-    [n(index+1), T(index+1), Q(index+1)] = Thruster_Model(Va(index), n(index), Throttle(index), rho, Thruster_Params, dt);
+    [n(index+1), T(index+1), Q(index+1), Va(index+1)] = Thruster_Model(Va(index), n(index), T(index), Q(index), Throttle(index), rho, Thruster_Params, dt);
     index = index + 1;
 end

@@ -1,18 +1,39 @@
-function [t, Fx, Mx] = process_raw_thruster_data()
+function [t, n, Fx, Mx] = process_raw_thruster_data()
 %PROCESS_RAW_THRUSTER_DATA process and filter raw thruster data
 %function [t, Fx, Mx] = process_raw_thruster_data()
 
-A = csvread('201803071252.csv');
+A = csvread('201807161552_Final_With_Tach.csv');
 
 t_raw = A(:,2);
-t = t_raw(1:5000);
+t = t_raw(1:5461);
 
-Fx_raw = -A(:,14);
+n_raw = 477.43*A(:,21)+5.3255; % Linear regression estimate of rpm from Tach Voltage
+
+lpFilt = designfilt('lowpassiir','FilterOrder',4, ...
+         'PassbandFrequency',5,'PassbandRipple',0.2, ...
+         'StopbandAttenuation', 120, 'SampleRate',1e3);
+
+n_lpf = filter(lpFilt,n_raw);
+
+n = n_lpf(2540:8000);
+
+% n = movmean(n_raw(2500:12000),70);
+
+% figure
+% subplot(2,1,1);
+% plot(t,n_raw(2500:11960)); ylabel('[rpm]'); grid on;
+% subplot(2,1,2);
+% plot(t,n)
+% xlabel('time, [s]'),ylabel('[rpm]')
+% grid
+
+Fx_raw = A(:,15)*-1; % -1 Multiplier because test was in reverse direction
 %Fx_movmean = movmean(Fx_raw,20);
 %Fx = Fx_movmean(6442:11441);
 
-Mx_raw = -A(:,17); %RH Thruster Data
-%Mx_raw = A(:,17); %LH Thruster Data
+Mx_raw = A(:,18)*-1; % -1 Multiplier because test was in reverse direction
+%Mx_raw = -A(:,18); %RH Thruster Data
+%Mx_raw = A(:,18); %LH Thruster Data
 %Mx_movmean = movmean(Mx_raw,20);
 %Mx = Mx_movmean(6442:11441);
 
@@ -22,60 +43,41 @@ Mx_raw = -A(:,17); %RH Thruster Data
 %subplot(2,1,2);
 %plot(t, Mx);
 
-%bsf Moment
-bsFilt = designfilt('bandstopfir', 'FilterOrder',40, ...
-         'CutoffFrequency1',70,'CutoffFrequency2',130, ...
-         'StopbandAttenuation', 120, 'SampleRate',1000);
+% bsf Moment
+% bsFilt = designfilt('bandstopfir', 'FilterOrder',40, ...
+%          'CutoffFrequency1',70,'CutoffFrequency2',130, ...
+%          'StopbandAttenuation', 120, 'SampleRate',1000);
+%
+% Mx_bsf = filter(bsFilt,Mx_raw);
+Mx_lpf = filter(lpFilt,Mx_raw);
+Mx = Mx_lpf(2540:8000);
+
+% figure;
+% subplot(3,1,1);
+% plot(t,Mx_raw(2500:11960)); ylabel('[Nm]'); grid on;
+% subplot(3,1,2);
+% plot(t_raw,Mx_bsf); ylabel('[Nm]'); grid on;
+% subplot(3,1,3); 
+% plot(t,Mx); xlabel('time [s]'); ylabel('[Nm]'); grid on;
      
-Mx_bsf = filter(bsFilt,Mx_raw);
-     
-%lpf Moment
-lpFilt = designfilt('lowpassiir','FilterOrder',20, ...
-         'PassbandFrequency',25,'PassbandRipple',0.2, ...
-         'StopbandAttenuation', 80, 'SampleRate',1e3);
+% Fx_bsf = filter(bsFilt,Fx_raw);
+Fx_lpf = filter(lpFilt,Fx_raw);
+Fx = Fx_lpf(2540:8000);
 
-Mx_bsf_lpf = filter(lpFilt,Mx_bsf);
+% figure;
+% subplot(3,1,1);
+% plot(t,Fx_raw(2500:11960)); ylabel('[N]'); grid on;
+% subplot(3,1,2);
+% plot(t_raw,Fx_bsf); ylabel('[N]'); grid on;
+% subplot(3,1,3); 
+% plot(t,Fx); xlabel('time [s]'); ylabel('[N]'); grid on;
 
-Mx = Mx_bsf_lpf(6496:11495);
-
-%figure;
-%subplot(3,1,1);
-%plot(t_raw,Mx_raw); ylabel('[Nm]'); grid on;
-%subplot(3,1,2);
-%plot(t_raw,Mx_bsf); ylabel('[Nm]'); grid on;
-%subplot(3,1,3); 
-%plot(t_raw,Mx_bsf_lpf); xlabel('time [s]'); ylabel('[Nm]'); grid on;
-
-%bsf Force
-bsFilt = designfilt('bandstopfir', 'FilterOrder',40, ...
-         'CutoffFrequency1',70,'CutoffFrequency2',130, ...
-         'StopbandAttenuation', 120, 'SampleRate',1000);
-     
-Fx_bsf = filter(bsFilt,Fx_raw);
-     
-%lpf Force
-lpFilt = designfilt('lowpassiir','FilterOrder',20, ...
-         'PassbandFrequency',20,'PassbandRipple',0.2, ...
-         'StopbandAttenuation', 120, 'SampleRate',1e3);
-
-Fx_bsf_lpf = filter(lpFilt,Fx_bsf);
-
-Fx = Fx_bsf_lpf(6496:11495);
-
-
-%figure;
-%subplot(3,1,1);
-%plot(t_raw,Fx_raw); ylabel('[N]'); grid on;
-%subplot(3,1,2);
-%plot(t_raw,Fx_bsf); ylabel('[N]'); grid on;
-%subplot(3,1,3); 
-%plot(t_raw,Fx_bsf_lpf); xlabel('time [s]'); ylabel('[N]'); grid on;
-
-%y = fft(Fx_raw);
-%fs = 1e3; %Hz
-%n = length(Fx_raw);          % number of samples
-%f = (0:n-1)*(fs/n);     % frequency range
-%power = abs(y).^2/n;    % power of the DFT
-
-%figure; plot(f,power);
-%keyboard;
+% y = fft(n_raw);
+% fs = 1e3; %Hz
+% n = length(n_raw);     % number of samples
+% f = (0:n-1)*(fs/n);     % frequency range
+% power = abs(y).^2/n;    % power of the DFT
+% 
+% figure; plot(f,power); grid on;
+% 
+% keyboard;
