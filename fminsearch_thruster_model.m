@@ -9,27 +9,27 @@ options.OutputFcn = [];
 options.PlotFcns = {@optimplotfval,@optimplotx};
 
 % Set pso options:
-psooptions = optimoptions('particleswarm');
-psooptions.CreationFcn= @pswcreationuniform;
-psooptions.Display= 'iter';
-psooptions.FunctionTolerance= 1.0000e-12;
-psooptions.HybridFcn= [];
-psooptions.InertiaRange= [0.1000 1.1000];
-psooptions.InitialSwarmMatrix= [];
-psooptions.InitialSwarmSpan= 100000;
-psooptions.MaxIterations= Inf;
-psooptions.MaxStallIterations= 1000;
-psooptions.MaxStallTime= Inf;
-psooptions.MaxTime= Inf;
-psooptions.MinNeighborsFraction= 0.2500;
-psooptions.ObjectiveLimit= -Inf;
-psooptions.OutputFcn=[];
-psooptions.PlotFcn= {[@pswplotbestf]};
-psooptions.SelfAdjustmentWeight= 1.4900;
-psooptions.SocialAdjustmentWeight= 1.4900;
-psooptions.SwarmSize = 30;
-psooptions.UseParallel= false;
-psooptions.UseVectorized= false;
+% psooptions = optimoptions('particleswarm');
+% psooptions.CreationFcn= @pswcreationuniform;
+% psooptions.Display= 'iter';
+% psooptions.FunctionTolerance= 1.0000e-12;
+% psooptions.HybridFcn= [];
+% psooptions.InertiaRange= [0.1000 1.1000];
+% psooptions.InitialSwarmMatrix= [];
+% psooptions.InitialSwarmSpan= 100000;
+% psooptions.MaxIterations= Inf;
+% psooptions.MaxStallIterations= 1000;
+% psooptions.MaxStallTime= Inf;
+% psooptions.MaxTime= Inf;
+% psooptions.MinNeighborsFraction= 0.2500;
+% psooptions.ObjectiveLimit= -Inf;
+% psooptions.OutputFcn=[];
+% psooptions.PlotFcn= {[@pswplotbestf]};
+% psooptions.SelfAdjustmentWeight= 1.4900;
+% psooptions.SocialAdjustmentWeight= 1.4900;
+% psooptions.SwarmSize = 30;
+% psooptions.UseParallel= false;
+% psooptions.UseVectorized= false;
 
 %Data to fit (Newton's law of cooling)
 %Ta_Data = 20;
@@ -62,8 +62,11 @@ constants = Generate_Thrust_Curves()
 %f = @(x)fitness_fcn_thruster_curve(x, To, Ta, dt, t_Data, Data);
 f = @(x)fitness_fcn_thruster_curve(x, constants, Va, Throttle, dt, t_Data, n_Data, T_Data, Q_Data);
 
-[x fval exitflag opt_output] = fminsearch(f,[10 10 1 2000 1 1 1 1], options)
+[x fval exitflag opt_output] = fminsearch(f,[11.4875 .0001 .437 5152.929 1.38857 4.092 1.259e-15 .000000001], options)
 % [x fval exitflag opt_output] = particleswarm(f,8,zeros(1,8),500*ones(1,8),psooptions)
+
+% x = [10 10 1 43042.5 .1 .1 .00000000000001 .000000000000001];
+% x = [73.9277 .1 .1 1950*73.9277 .1 .1 0 0];
 
 %simulate and plot result
 rho = 1027; %[kg/m^3] Density of seawater
