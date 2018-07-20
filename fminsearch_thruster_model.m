@@ -62,23 +62,23 @@ constants = Generate_Thrust_Curves()
 %f = @(x)fitness_fcn_thruster_curve(x, To, Ta, dt, t_Data, Data);
 f = @(x)fitness_fcn_thruster_curve(x, constants, Va, Throttle, dt, t_Data, n_Data, T_Data, Q_Data);
 
-[x fval exitflag opt_output] = fminsearch(f,[11.4875 .0001 .437 5152.929 1.38857 4.092 1.259e-15 .000000001], options)
+[x fval exitflag opt_output] = fminsearch(f,[11.4875 .0001 .437 5152.929 1.38857 4.092 .0001 .000000001], options)
 % [x fval exitflag opt_output] = particleswarm(f,8,zeros(1,8),500*ones(1,8),psooptions)
 
 % x = [10 10 1 43042.5 .1 .1 .00000000000001 .000000000000001];
 % x = [73.9277 .1 .1 1950*73.9277 .1 .1 0 0];
-% x = [11.4875 .0001 .437 5152.929 1.38857 4.092 1.259e-15 .000000001];
+% x = [11.4875 .0001 .437 5152.929 1.38857 4.092 .0001 .000000001];
 
 %simulate and plot result
 rho = 1027; %[kg/m^3] Density of seawater
 Thruster_Config.D = 0.1151; %[m] propellor diameter
 Thruster_Config.kt = (rho*.1*(pi/4)*(Thruster_Config.D^2))^-1; % Thrust coeff from Fossen paper
-Thruster_Config.kn1 = x(1); %[rate parameter]
-Thruster_Config.kn2 = x(2); %[rate parameter]
-Thruster_Config.kq = x(3); %[rate parameter]
-Thruster_Config.kv = x(4); %[rate parameter]
-Thruster_Config.ku1 = x(5); %[rate parameter]
-Thruster_Config.ku2 = x(6); %[rate parameter]
+Thruster_Config.kn1 = abs(x(1)); %[rate parameter]
+Thruster_Config.kn2 = abs(x(2)); %[rate parameter]
+Thruster_Config.kq = abs(x(3)); %[rate parameter]
+Thruster_Config.kv = abs(x(4)); %[rate parameter]
+Thruster_Config.ku1 = abs(x(5)); %[rate parameter]
+Thruster_Config.ku2 = abs(x(6)); %[rate parameter]
 Thruster_Config.cT1 = constants(1);
 Thruster_Config.cT2 = constants(2);
 Thruster_Config.dT1 = constants(3);
@@ -87,8 +87,8 @@ Thruster_Config.cQ1 = constants(5);
 Thruster_Config.cQ2 = constants(6);
 Thruster_Config.dQ1 = constants(7);
 Thruster_Config.dQ2 = constants(8);
-Thruster_Config.alpha2 = x(7);
-Thruster_Config.beta2 = x(8);
+Thruster_Config.alpha2 = abs(x(7));
+Thruster_Config.beta2 = abs(x(8));
 Thruster_Config.RH_prop = (constants(5)<0); %1 for RH, 0 for LH
 
 %Run Simulation

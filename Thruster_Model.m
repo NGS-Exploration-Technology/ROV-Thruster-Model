@@ -84,5 +84,9 @@ end
 T = rho*D^4*(alpha1-alpha2*J0*abs(n)*n); %[N] thrust
 
 %Calculate Torque
-Q = rho*D^5*(beta1-beta2*J0*abs(n)*n); %[Nm] torque
+if Thruster_Config.RH_prop
+    Q = rho*D^5*(beta1+beta2*J0*abs(n)*n); %[Nm] torque
+else
+    Q = rho*D^5*(beta1-beta2*J0*abs(n)*n); %[Nm] torque
+end
 end
