@@ -67,6 +67,7 @@ f = @(x)fitness_fcn_thruster_curve(x, constants, Va, Throttle, dt, t_Data, n_Dat
 
 % x = [10 10 1 43042.5 .1 .1 .00000000000001 .000000000000001];
 % x = [73.9277 .1 .1 1950*73.9277 .1 .1 0 0];
+% x = [11.4875 .0001 .437 5152.929 1.38857 4.092 1.259e-15 .000000001];
 
 %simulate and plot result
 rho = 1027; %[kg/m^3] Density of seawater
