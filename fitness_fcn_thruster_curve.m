@@ -44,9 +44,9 @@ mse_N = mean((n_Data-n_out').^2);
 var_N = var(n_Data-n_out');
 
 % Add new weight parameter
-mse_T_2 = mean((T_Data(1:1000)-T_out(1:1000)').^2);
-var_T_2 = var(T_Data(1:1000)-T_out(1:1000)');
+mse_T_2 = mean((T_Data(150:500)-T_out(150:500)').^2);
+var_T_2 = var(T_Data(150:500)-T_out(150:500)');
 
 %Calculate loss function
 loss = ((40*sqrt(mse_T+var_T) + 1000*sqrt(mse_Q+var_Q) + sqrt(mse_N+var_N))/3)+std(sqrt([1600*mse_T 1000000*mse_Q mse_N]));
-loss = loss+100*sqrt(mse_T_2+var_T_2);
+loss = loss+500*sqrt(mse_T_2+var_T_2);

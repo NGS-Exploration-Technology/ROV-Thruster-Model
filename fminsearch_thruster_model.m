@@ -62,12 +62,14 @@ constants = Generate_Thrust_Curves()
 %f = @(x)fitness_fcn_thruster_curve(x, To, Ta, dt, t_Data, Data);
 f = @(x)fitness_fcn_thruster_curve(x, constants, Va, Throttle, dt, t_Data, n_Data, T_Data, Q_Data);
 
-[x fval exitflag opt_output] = fminsearch(f,[11.4875 .0001 .437 5152.929 1.38857 4.092 .0001 .000000001], options)
+[x fval exitflag opt_output] = fminsearch(f,[1.0894e-13 .0043 70.7035 4676.2 2.2955 179.7885 5.5639e-06 8.8988e-08], options)
 % [x fval exitflag opt_output] = particleswarm(f,8,zeros(1,8),500*ones(1,8),psooptions)
 
 % x = [10 10 1 43042.5 .1 .1 .00000000000001 .000000000000001];
 % x = [73.9277 .1 .1 1950*73.9277 .1 .1 0 0];
 % x = [11.4875 .0001 .437 5152.929 1.38857 4.092 .0001 .000000001];
+% x = [1.0894e-13 .0043 70.7035 4676.2 2.2955 179.7885 5.5639e-06 8.8988e-08];
+% x = [1 .0043 70.7035 4676.2 2.2955 179.7885 5.5639e-06 8.8988e-08];
 
 %simulate and plot result
 rho = 1027; %[kg/m^3] Density of seawater

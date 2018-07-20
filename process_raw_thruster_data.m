@@ -13,9 +13,11 @@ lpFilt = designfilt('lowpassiir','FilterOrder',4, ...
          'PassbandFrequency',2,'PassbandRipple',0.01, ...
          'StopbandAttenuation', 120, 'SampleRate',1e3);
 
-n_lpf = filter(lpFilt,n_raw);
+% n_lpf = filter(lpFilt,n_raw);
 
-n = n_lpf(2600:8000);
+% n = n_lpf(2600:8000);
+
+n = n_raw(2520:7920);
 
 % n = movmean(n_raw(2500:12000),70);
 
@@ -25,7 +27,9 @@ n = n_lpf(2600:8000);
 % subplot(2,1,2);
 % plot(t,n)
 % xlabel('time, [s]'),ylabel('[rpm]')
-% grid
+grid
+
+% keyboard
 
 Fx_raw = A(:,15)*-1; % -1 Multiplier because test was in reverse direction
 %Fx_movmean = movmean(Fx_raw,20);
@@ -52,8 +56,8 @@ Mx = Mx_lpf(2600:8000);
 % subplot(2,1,2); 
 % plot(t,Mx); xlabel('time [s]'); ylabel('[Nm]'); grid on;
 
-Fx_lpf = filter(lpFilt,Fx_raw);
-Fx = Fx_lpf(2600:8000);
+% Fx_lpf = filter(lpFilt,Fx_raw);
+Fx = Fx_raw(2520:7920);
 
 % figure;
 % subplot(2,1,1);
