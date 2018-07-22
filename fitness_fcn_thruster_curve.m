@@ -30,6 +30,7 @@ Thruster_Config.RH_prop = (constants(5)<0); %1 for RH, 0 for LH
 
 %Interpolate thrust data and calculate mse
 % T_Data_int = interp1(t_Data,T_Data, t_n);
+
 mse_T = mean((T_Data-T_out').^2); %Calculate MSE
 var_T = var(T_Data-T_out');
 
