@@ -54,7 +54,7 @@ figure
 plot(n,T,'o',n,T_fit,'--')
 xlabel('Propeller Speed, n [rpm]')
 ylabel('Thrust, T [N]')
-title('Fitted Thrust vs. RPM')
+title('Steady-State Thrust vs. RPM')
 legend('Data','Model')
 grid
 
@@ -63,7 +63,7 @@ figure
 plot(n,Q,'o',n,Q_fit,'--')
 xlabel('Propeller Speed, n [rpm]')
 ylabel('Torque, Q [Nm]')
-title('Fitted Torque vs. RPM')
+title('Steady-State Torque vs. RPM')
 legend('Data','Model')
 grid
 end
