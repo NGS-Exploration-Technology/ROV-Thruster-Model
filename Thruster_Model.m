@@ -27,13 +27,12 @@ function [n, T, Q, Va] = Thruster_Model(Va, n0, T0, Q0, Throttle , rho, Thruster
 % g = Thruster_Config.g; %[rps/throttle]
 % k = Thruster_Config.k; %[rate parameter]
 D = Thruster_Config.D; %[m] propellor diameter
-kt = Thruster_Config.kt;
 kn1 = Thruster_Config.kn1; %[rate parameter]
-kn2 = Thruster_Config.kn2; %[rate parameter]
 kq = Thruster_Config.kq; %[rate parameter]
 kv = Thruster_Config.kv; %[rate parameter]
 ku1 = Thruster_Config.ku1; %[rate parameter]
 ku2 = Thruster_Config.ku2; %[rate parameter]
+kt = Thruster_Config.kt;
 cT1 = Thruster_Config.cT1;
 cT2 = Thruster_Config.cT2;
 dT1 = Thruster_Config.dT1;
@@ -49,20 +48,20 @@ beta2 = Thruster_Config.beta2;
 % n_command = g*Throttle;
 % d_n = -k*(n0-n_command);
 if Thruster_Config.RH_prop
-    d_n = -kn1*n0-kn2*n0*abs(n0)+kq*Q0+kv*Throttle; % RH prop
+    d_n = -kn1*n0+kq*Q0+kv*Throttle; % RH prop
 else
-    d_n = -kn1*n0-kn2*n0*abs(n0)-kq*Q0+kv*Throttle; % LH prop
+    d_n = -kn1*n0-kq*Q0+kv*Throttle; % LH prop
 end
 n = n0+d_n*dt;
 d_u = -ku1*Va-ku2*Va*abs(Va)+kt*T0;
 Va = Va+d_u*dt;
 
 %Calculate Advance Coefficient
+%J0 = 0; %Assume the flow velocity is zero
 if (n==0) 
    n = 1E-100;
 end
 J0 = Va/(n*D);
-%J0 = 0; %Assume the flow velocity is zero
 
 % Calculate deadband piecewise quadratic coefficients:
 if n*abs(n)<=dT1
