@@ -63,7 +63,7 @@ prop_const = optimize_voltage_constant()
 %f = @(x)fitness_fcn_thruster_curve(x, To, Ta, dt, t_Data, Data);
 f = @(x)fitness_fcn_thruster_curve(x, constants, prop_const, Va, Throttle, dt, t_Data, n_Data, T_Data, Q_Data);
 
-[x fval exitflag opt_output] = fminsearch(f,[700 10 .5*constants(2) 15*constants(6)], options)
+[x fval exitflag opt_output] = fminsearch(f,[750 10 .2*constants(2) 25*constants(6)], options)
 % [x fval exitflag opt_output] = particleswarm(f,8,zeros(1,8),500*ones(1,8),psooptions)
 
 % x = [10 10 1 43042.5 .1 .1 .00000000000001 .000000000000001];
@@ -72,12 +72,12 @@ f = @(x)fitness_fcn_thruster_curve(x, constants, prop_const, Va, Throttle, dt, t
 % x = [1.0894e-13 .0043 70.7035 4676.2 2.2955 179.7885 5.5639e-06 8.8988e-08];
 % x = [10 0 79500 5500 0 10 2*constants(2) 2*constants(6)];
 % x = [10 0 2500 5500 0 10 2*constants(2) 2*constants(6)];
-% x = [600 10 .5*constants(2) 15*constants(6)];
+% x = [750 10 .2*constants(2) 25*constants(6)];
 
 %simulate and plot result
 rho = 1027; %[kg/m^3] Density of seawater
 Thruster_Config.D = 0.1151; %[m] propellor diameter
-Thruster_Config.L = 0.07; %[m] duct length
+Thruster_Config.L = 0.075; %[m] duct length
 Thruster_Config.kt = (2*rho*Thruster_Config.L*(pi/4)*(Thruster_Config.D^2))^-1; % Thrust coeff from Fossen paper
 Thruster_Config.kn1 = abs(prop_const(1)); %[rate parameter]
 Thruster_Config.kv = abs(prop_const(2)); %[rate parameter]
@@ -101,27 +101,23 @@ Thruster_Config.RH_prop = (constants(5)<0); %1 for RH, 0 for LH
 
 %Plot results
 figure;
+subplot(3,1,1);
 plot(t_Data, T_Data, t_fit, T_fit, '--k');
-title('Thrust Profile Model Fit to Data');
-xlabel('Time, t, [s]'); ylabel('Thrust, T, [N]');
-legend('Experimental', 'Model');
-axis([0 1 0 60]);
+ylabel('Thrust [N]');
+axis([0 2 0 110]);
 grid on;
 
-figure;
+subplot(3,1,2);
 plot(t_Data, -Q_Data, t_fit, -Q_fit, '--k');
-title('Torque Profile Model Fit to Data');
-xlabel('Time, t, [s]'); ylabel('Torque [Nm]');
-legend('Experimental', 'Model');
-axis([0 1 0 2]);
+ylabel('Torque [Nm]');
+axis([0 2 -2 3]);
 grid on;
 
-figure;
+subplot(3,1,3);
 plot(t_Data, n_Data, t_fit, n_fit, '--k');
-title('Propeller Speed Model Fit to Data')
-xlabel('Time, t, [s]'); ylabel('Prop Speed, n, [rpm]');
-legend('Experimental', 'Model');
-axis([0 1 0 2500]);
+xlabel('Time [s]'); ylabel('Propeller Speed [rpm]');
+legend('Experimental', 'Model', 'Location','Southeast');
+axis([0 2 0 2500]);
 grid on;
 
 figure;

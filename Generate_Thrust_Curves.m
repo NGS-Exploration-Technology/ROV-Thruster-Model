@@ -51,19 +51,16 @@ T_fit = rho*D^4*alpha1; % [N] thrust
 Q_fit = rho*D^5*beta1; % [Nm] torque
 
 figure
+subplot(2,1,1)
 plot(n,T,'o',n,T_fit,'--k')
-xlabel('Propeller Speed, n [rpm]')
-ylabel('Thrust, T, [N]')
-title('Steady-State Thrust vs. RPM')
-legend('Experimental','Model')
+ylabel('Thrust [N]')
+legend('Experimental','Model','Location','Northwest')
 grid
 
 n(7) = [];
-figure
+subplot(2,1,2)
 plot(n,-Q,'o',n,-Q_fit,'--k')
-xlabel('Propeller Speed, n [rpm]')
-ylabel('Torque, Q, [Nm]')
-title('Steady-State Torque vs. RPM')
-legend('Experimental','Model')
+xlabel('Propeller Speed [rpm]')
+ylabel('Torque [Nm]')
 grid
 end
