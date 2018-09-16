@@ -77,6 +77,6 @@ plot(n,-Q,'o',n,-Q_fit,'--r')
 ylabel('Torque [Nm]','FontSize',font,'FontName','Times New Roman')
 
 legend({'Experimental','Model','Experimental','Model'},'FontSize',font,'FontName','Times New Roman','Location','Northwest')
-set(gca,'FontSize',font,'FontName','Times New Roman');
+set(gca,'FontSize',font,'FontName','Times New Roman')
 grid
 end

@@ -12,5 +12,5 @@ xlabel('Throttle [V]','FontSize',font,'FontName','Times New Roman')
 xticks(-5:5)
 ylabel('Propeller Speed [rpm]','FontSize',font,'FontName','Times New Roman')
 legend({'Experimental','Model'},'FontSize',font,'FontName','Times New Roman','Location','Northwest')
-set(gca,'FontSize',font,'FontName','Times New Roman');
+set(gca,'FontSize',font,'FontName','Times New Roman')
 grid
