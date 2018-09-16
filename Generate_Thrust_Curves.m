@@ -50,17 +50,33 @@ beta1 = [cQ1*(n2Q(n2Q<=dQ1)-dQ1);0*n2Q(n2Q<dQ2 & n2Q>dQ1);cQ2*(n2Q(n2Q>=dQ2)-dQ2
 T_fit = rho*D^4*alpha1; % [N] thrust
 Q_fit = rho*D^5*beta1; % [Nm] torque
 
+% figure
+% subplot(2,1,1)
+% plot(n,T,'o',n,T_fit,'--k')
+% ylabel('Thrust [N]')
+% legend('Experimental','Model','Location','Northwest')
+% grid
+% 
+% n(7) = [];
+% subplot(2,1,2)
+% plot(n,-Q,'o',n,-Q_fit,'--k')
+% xlabel('Propeller Speed [rpm]')
+% ylabel('Torque [Nm]')
+% grid
+
+font = 14;
 figure
-subplot(2,1,1)
-plot(n,T,'o',n,T_fit,'--k')
-ylabel('Thrust [N]')
-legend('Experimental','Model','Location','Northwest')
-grid
+yyaxis left
+plot(n,T,'o',n,T_fit,'--b')
+xlabel('Propeller Speed [rpm]','FontSize',font,'FontName','Times New Roman')
+ylabel('Thrust [N]','FontSize',font,'FontName','Times New Roman')
 
 n(7) = [];
-subplot(2,1,2)
-plot(n,-Q,'o',n,-Q_fit,'--k')
-xlabel('Propeller Speed [rpm]')
-ylabel('Torque [Nm]')
+yyaxis right
+plot(n,-Q,'o',n,-Q_fit,'--r')
+ylabel('Torque [Nm]','FontSize',font,'FontName','Times New Roman')
+
+legend({'Experimental','Model','Experimental','Model'},'FontSize',font,'FontName','Times New Roman','Location','Northwest')
+set(gca,'FontSize',font,'FontName','Times New Roman');
 grid
 end
