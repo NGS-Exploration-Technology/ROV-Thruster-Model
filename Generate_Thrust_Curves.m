@@ -64,7 +64,7 @@ Q_fit = rho*D^5*beta1; % [Nm] torque
 % ylabel('Torque [Nm]')
 % grid
 
-font = 14;
+font = 12;
 figure
 yyaxis left
 plot(n,T,'o',n,T_fit,'--b')
