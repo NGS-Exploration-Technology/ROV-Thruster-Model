@@ -7,7 +7,7 @@ rpm_c = [554.02*u_c(u_c<=(-468.7/553.02))+468.7,0*u_c(u_c>(-468.7/553.02) & u_c<
 
 font = 12;
 figure
-plot(u_d,rpm_d,'o',u_c,rpm_c,'--k')
+plot(u_d,rpm_d,'o',u_c,rpm_c,'--k','LineWidth',1.5)
 xlabel('Throttle [V]','FontSize',font,'FontName','Times New Roman')
 xticks(-5:5)
 ylabel('Propeller Speed [rpm]','FontSize',font,'FontName','Times New Roman')

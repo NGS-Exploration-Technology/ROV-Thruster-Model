@@ -65,15 +65,16 @@ Q_fit = rho*D^5*beta1; % [Nm] torque
 % grid
 
 font = 12;
+width = 1.5;
 figure
 yyaxis left
-plot(n,T,'o',n,T_fit,'--b')
+plot(n,T,'o',n,T_fit,'--b','LineWidth',width)
 xlabel('Propeller Speed [rpm]','FontSize',font,'FontName','Times New Roman')
 ylabel('Thrust [N]','FontSize',font,'FontName','Times New Roman')
 
 n(7) = [];
 yyaxis right
-plot(n,-Q,'o',n,-Q_fit,'--r')
+plot(n,-Q,'o',n,-Q_fit,'--r','LineWidth',width)
 ylabel('Torque [Nm]','FontSize',font,'FontName','Times New Roman')
 
 legend({'Experiment','Model','Experiment','Model'},'FontSize',font,'FontName','Times New Roman','Location','Northwest')
