@@ -104,6 +104,7 @@ ylabel('Force [N]');
 legend('Experimental', 'Model');
 %axis([0 3 0 100]);
 grid on;
+
 subplot(4,1,2);
 plot(t_Data, Q_Data, t_fit, Q_fit, '--k');
 ylabel('Torque [Nm]');

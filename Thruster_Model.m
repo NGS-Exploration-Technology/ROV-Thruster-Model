@@ -6,6 +6,8 @@ function [n, T, Q, Va] = Thruster_Model(Va, n0, T0, Q0, Throttle , rho, Thruster
 %inputs:
 %   Va = [m/s] Flow velocity at prop
 %   n0 = [rps] current revolutions per second
+%   T0 = [N] current thrust
+%   Q0 = [Nm] current torque
 %   Throttle = current throttle (-1 to 1)
 %   rho = density of seawater
 %   Thruster_Params = parameters of the thruster model

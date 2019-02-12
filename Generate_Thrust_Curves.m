@@ -1,4 +1,20 @@
-function x = Generate_Thrust_Curves()
+function [x, Throttle, n, T_fit, Q_fit] = Generate_Thrust_Curves()
+%function [x, Throttle, n, T_fit, Q_fit] = Generate_Thrust_Curves()
+%GENERATE_THRUST_CURVES fit Fossen steady state thruster model
+%
+%Inputs:
+%   None (Hard coded to loadcell test data
+%
+%Outputs
+%   x = Steady state model params
+%   Throttle = [V] Throttle Voltage
+%   n = Thruster rpm
+%   T_fit = thrust fit to model
+%   Q_fit = reaction torque fit to model
+%
+%National Geographic Society
+%February 4, 2019
+%Jordan Boehm (mostly but cleaned up by Eric Berkenpas)
 
 %Set fminsearch options
 options.Display= 'final';
@@ -12,14 +28,24 @@ options.PlotFcns = {@optimplotfval,@optimplotx};
 
 % Read in data:
 A = csvread('Tach_RPM_Thrust_Data.csv');
+Throttle = A(:,1);
 n = A(:,7);
 T = A(:,5);
 Q = A(:,6);
 
+
+% Delete problematic data:
+%n2Q = n2;
+Throttle(7) = [];
+%n2Q(7) = [];
+n(7) = [];
+T(7) = [];
+Q(7) = [];
+
 % fminsearch operation:
 f = @(x)fitness_fcn_rpm_thrust_torque(x,n,T,Q);
 
-[x,fval,exitflag,opt_output] = fminsearch(f,[1 1 -1 1 1 1 -1 1], options)
+[x,fval,exitflag,opt_output] = fminsearch(f,[1 1 -1 1 1 1 -1 1], options);
 
 cT1 = x(1);
 cT2 = x(2);
@@ -35,12 +61,18 @@ D = 0.1151; %[m] propellor diameter
 rho = 1027; %[kg/m^3] Density of seawater
 
 % Precalculate quadratic term:
-n2 = n.*abs(n);
+%n2 = n.*abs(n); -eb
 
 % Delete problematic data:
+%n2Q = n2;
+%Throttle(7) = [];
+%n2Q(7) = [];
+%Q(7) = [];
+%n(7) = [];
+
+% Precalculate quadratic term:
+n2 = n.*abs(n);
 n2Q = n2;
-n2Q(7) = [];
-Q(7) = [];
 
 % Calculate deadband piecewise quadratic function:
 alpha1 = [cT1*(n2(n2<=dT1)-dT1);0*n2(n2<dT2 & n2>dT1);cT2*(n2(n2>=dT2)-dT2)];
@@ -56,9 +88,9 @@ xlabel('Propeller Speed, n [rpm]')
 ylabel('Thrust, T [N]')
 title('Fitted Thrust vs. RPM')
 legend('Data','Model')
-grid
+grid;
 
-n(7) = [];
+%n(7) = [];
 figure
 plot(n,Q,'o',n,Q_fit,'--')
 xlabel('Propeller Speed, n [rpm]')
@@ -66,4 +98,5 @@ ylabel('Torque, Q [Nm]')
 title('Fitted Torque vs. RPM')
 legend('Data','Model')
 grid
+
 end
