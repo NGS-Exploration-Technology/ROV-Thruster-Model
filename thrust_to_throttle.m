@@ -1,5 +1,5 @@
 function Throttle=thrust_to_throttle(Thrust, Table_Thrusts, Table_Throttles)
-%function Throttle=thrust_to_throttle(Thrust, Throttle_Table)
+%function Throttle=thrust_to_throttle(Thrust, Table_Thrusts, Table_Throttles)
 %THRUST_TO_THROTTLE calculate the Throttle based on a desired Thrust
 %
 %Inputs:
@@ -11,19 +11,21 @@ function Throttle=thrust_to_throttle(Thrust, Table_Thrusts, Table_Throttles)
 %   Throttle = Throttle Value from -1 to 1
 %
 %National Geographic Society
-%February 4, 2019
+%February 13, 2019
 %Eric Berkenpas
 
 min_Thrusts = Table_Thrusts(1);
 max_Thrusts = Table_Thrusts(end);
-keyboard;
 
-%Calculate fractional table indiex
-Table_Index = (Thrust-min_Thrusts)*1 + 1;
+%Pad Table_Throttles with Last Value
+Table_Throttles(end+1) = Table_Throttles(end);
+
+%Calculate fractional table index
+Table_Index = ((Thrust-min_Thrusts)/(max_Thrusts-min_Thrusts))*127+1;
 
 %Saturation Filter
-if(Table_Index>64)
-    Table_Index = 64;
+if(Table_Index>128)
+    Table_Index = 128;
 end
 if(Table_Index<1)
     Table_Index = 1;
