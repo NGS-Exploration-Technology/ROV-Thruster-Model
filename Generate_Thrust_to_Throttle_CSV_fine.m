@@ -19,6 +19,12 @@ Thrusts_Table = linspace(min(T),max(T),128)';
 Throttles_Table = interp1(T,Throttle,Thrusts_Table,'pchip');
 Torques_Table = interp1(T,Q,Thrusts_Table,'makima');
 
+%Force center sample to be
+Zero_Thrust_Point = find(abs(Throttles_Table)==min(abs(Throttles_Table)));
+
+Throttles_Table(Zero_Thrust_Point) = 0;
+Thrusts_Table(Zero_Thrust_Point) = 0;
+
 %subplot(2,1,1);
 plot(T,Throttle,'xb',Thrusts_Table, Throttles_Table,'.k');
 %subplot(2,1,2);

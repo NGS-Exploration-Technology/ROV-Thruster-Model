@@ -51,10 +51,13 @@ beta2 = Thruster_Config.beta2;
 % n_command = g*Throttle;
 % d_n = -k*(n0-n_command);
 if Thruster_Config.RH_prop
+    %d_n = -kn1*n0-kn2*n0*abs(n0)+kq*Q0+kv*Throttle; % RH prop
     d_n = -kn1*n0-kn2*n0*abs(n0)+kq*Q0+kv*Throttle; % RH prop
 else
+    %d_n = -kn1*n0-kn2*n0*abs(n0)-kq*Q0+kv*Throttle; % LH prop
     d_n = -kn1*n0-kn2*n0*abs(n0)-kq*Q0+kv*Throttle; % LH prop
 end
+
 n = n0+d_n*dt;
 d_u = -ku1*Va-ku2*Va*abs(Va)+kt*T0;
 Va = Va+d_u*dt;
