@@ -52,17 +52,21 @@ Q_Data = Mx;
 
 %Set up model params
 n_samples = length(t_Data);
-Throttle = 5*ones(1,n_samples);
-Va = zeros(size(Throttle));
+%Throttle = 5*ones(1,n_samples);
+%Throttle = 5*ones(1,n_samples);
+n_command = 2.326895110533678e+03*ones(1,n_samples);
+Va = zeros(size(n_command));
 dt = 0.001;
 
 constants = Generate_Thrust_Curves()
 
 %define Fitness Function
 %f = @(x)fitness_fcn_thruster_curve(x, To, Ta, dt, t_Data, Data);
-f = @(x)fitness_fcn_thruster_curve(x, constants, Va, Throttle, dt, t_Data, n_Data, T_Data, Q_Data);
+%f = @(x)fitness_fcn_thruster_curve(x, constants, Va, Throttle, dt, t_Data, n_Data, T_Data, Q_Data);
+f = @(x)fitness_fcn_thruster_curve(x, constants, n_command, dt, t_Data, n_Data, T_Data, Q_Data);
 
-[x fval exitflag opt_output] = fminsearch(f,[1.0894e-13 .0043 70.7035 4676.2 2.2955 179.7885 5.5639e-06 8.8988e-08], options)
+%[x fval exitflag opt_output] = fminsearch(f,[1.0894e-13 .0043 70.7035 4676.2 2.2955 179.7885 5.5639e-06 8.8988e-08], options)
+[x fval exitflag opt_output] = fminsearch(f,[-0.000000001932526  -0.000046688153455  -2.484188897086109   0.108323135550061  -0.000505565774595  -0.000000007103002   0.000021211300842 -0.000073812027208], options)
 % [x fval exitflag opt_output] = particleswarm(f,8,zeros(1,8),500*ones(1,8),psooptions)
 
 % x = [10 10 1 43042.5 .1 .1 .00000000000001 .000000000000001];
@@ -94,28 +98,23 @@ Thruster_Config.beta2 = abs(x(8));
 Thruster_Config.RH_prop = (constants(5)<0); %1 for RH, 0 for LH
 
 %Run Simulation
-[t_fit, T_fit, Q_fit, n_fit, u_fit] = sim_thruster(Va, Throttle , rho, Thruster_Config, dt);
+[t_fit, T_fit, Q_fit, n_fit] = sim_thruster(n_command , rho, Thruster_Config, dt);
 
 %Plot results
 figure;
-subplot(4,1,1);
+subplot(3,1,1);
 plot(t_Data, T_Data, t_fit, T_fit, '--k'); 
 ylabel('Force [N]');
 legend('Experimental', 'Model');
 %axis([0 3 0 100]);
 grid on;
 
-subplot(4,1,2);
+subplot(3,1,2);
 plot(t_Data, Q_Data, t_fit, Q_fit, '--k');
 ylabel('Torque [Nm]');
 %axis([0 3 -1 20]);
 grid on;
-subplot(4,1,3);
+subplot(3,1,3);
 plot(t_Data, n_Data, t_fit, n_fit, '--k');
 ylabel('Prop Speed [rpm]');
 %axis([0 3 -1 35]);
-grid on;
-subplot(4,1,4);
-plot(t_fit,u_fit,'--k')
-xlabel('Time [s]'); ylabel('Flow Speed [m/s]');
-grid on;

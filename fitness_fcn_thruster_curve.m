@@ -1,4 +1,4 @@
-function loss = fitness_fcn_thruster_curve(x, constants, Va, Throttle, dt, t_Data, n_Data, T_Data, Q_Data)
+function loss = fitness_fcn_thruster_curve(x, constants, n_command, dt, t_Data, n_Data, T_Data, Q_Data)
 %FITNESS_FCN_CONTROL_SYSTEM for plotting
 %function loss = fitness_fcn_thruster_curve(x, Va, Throttle, dt, t_data, T_Data, Q_data)
 %
@@ -26,7 +26,7 @@ Thruster_Config.beta2 = abs(x(8));
 Thruster_Config.RH_prop = (constants(5)<0); %1 for RH, 0 for LH
 
 %Run Simulation
-[~, T_out, Q_out, n_out, ~] = sim_thruster(Va, Throttle , rho, Thruster_Config, dt);
+[~, T_out, Q_out, n_out] = sim_thruster(n_command , rho, Thruster_Config, dt);
 
 %Interpolate thrust data and calculate mse
 % T_Data_int = interp1(t_Data,T_Data, t_n);
@@ -50,4 +50,4 @@ var_T_2 = var(T_Data(150:500)-T_out(150:500)');
 
 %Calculate loss function
 loss = ((40*sqrt(mse_T+var_T) + 1000*sqrt(mse_Q+var_Q) + sqrt(mse_N+var_N))/3)+std(sqrt([1600*mse_T 1000000*mse_Q mse_N]));
-loss = loss+500*sqrt(mse_T_2+var_T_2);
+loss = loss+500*sqrt(mse_T_2+var_T_2)+5E3*mse_N;
