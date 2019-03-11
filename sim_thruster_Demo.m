@@ -16,7 +16,7 @@ dt = 0.001; %[s]
 rho = 1027; %[kg/m^3] Density of seawater
 
 load('Thruster_Config2.mat'); %Load previously fit thruster model params
-Thruster_Config.RH_prop = 1;
+Thruster_Config.RH_prop = 0;
 
 [t_fit, T_fit, Q_fit, n_fit] = sim_thruster(n_command_vector , rho, Thruster_Config, dt);
 
