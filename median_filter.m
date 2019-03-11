@@ -7,6 +7,10 @@ function [filtered] = median_filter(samples, median_size)
 %outputs
 %   filtered = output vector
 
+%Define variables
+filtered = zeros(size(samples));
+median_vector = zeros(1,median_size);
+
 index = 1;
 
 while(index<(length(samples)-median_size))
@@ -21,4 +25,4 @@ while(index<(length(samples)+1))
     index = index+1;
 end
 
-filtered = filtered';
+%filtered = filtered';

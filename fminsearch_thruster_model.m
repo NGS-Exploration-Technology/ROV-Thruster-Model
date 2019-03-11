@@ -66,7 +66,7 @@ constants = Generate_Thrust_Curves()
 f = @(x)fitness_fcn_thruster_curve(x, constants, n_command, dt, t_Data, n_Data, T_Data, Q_Data);
 
 %[x fval exitflag opt_output] = fminsearch(f,[1.0894e-13 .0043 70.7035 4676.2 2.2955 179.7885 5.5639e-06 8.8988e-08], options)
-[x fval exitflag opt_output] = fminsearch(f,[-0.000000001932526  -0.000046688153455  -2.484188897086109   0.108323135550061  -0.000505565774595  -0.000000007103002   0.000021211300842 -0.000073812027208], options)
+[x fval exitflag opt_output] = fminsearch(f,[1], options)
 % [x fval exitflag opt_output] = particleswarm(f,8,zeros(1,8),500*ones(1,8),psooptions)
 
 % x = [10 10 1 43042.5 .1 .1 .00000000000001 .000000000000001];
@@ -78,13 +78,7 @@ f = @(x)fitness_fcn_thruster_curve(x, constants, n_command, dt, t_Data, n_Data, 
 %simulate and plot result
 rho = 1027; %[kg/m^3] Density of seawater
 Thruster_Config.D = 0.1151; %[m] propellor diameter
-Thruster_Config.kt = (rho*.1*(pi/4)*(Thruster_Config.D^2))^-1; % Thrust coeff from Fossen paper
-Thruster_Config.kn1 = abs(x(1)); %[rate parameter]
-Thruster_Config.kn2 = abs(x(2)); %[rate parameter]
-Thruster_Config.kq = abs(x(3)); %[rate parameter]
-Thruster_Config.kv = abs(x(4)); %[rate parameter]
-Thruster_Config.ku1 = abs(x(5)); %[rate parameter]
-Thruster_Config.ku2 = abs(x(6)); %[rate parameter]
+Thruster_Config.kv = abs(x(1)); %[rate parameter]
 Thruster_Config.cT1 = constants(1);
 Thruster_Config.cT2 = constants(2);
 Thruster_Config.dT1 = constants(3);
@@ -93,9 +87,28 @@ Thruster_Config.cQ1 = constants(5);
 Thruster_Config.cQ2 = constants(6);
 Thruster_Config.dQ1 = constants(7);
 Thruster_Config.dQ2 = constants(8);
-Thruster_Config.alpha2 = abs(x(7));
-Thruster_Config.beta2 = abs(x(8));
 Thruster_Config.RH_prop = (constants(5)<0); %1 for RH, 0 for LH
+
+% g = Thruster_Config.g; %[rps/throttle]
+% k = Thruster_Config.k; %[rate parameter]
+D = Thruster_Config.D; %[m] propellor diameter
+%kt = Thruster_Config.kt;
+%kn1 = Thruster_Config.kn1; %[rate parameter]
+%kn2 = Thruster_Config.kn2; %[rate parameter]
+%kq = Thruster_Config.kq; %[rate parameter]
+kv = Thruster_Config.kv; %[rate parameter]
+%ku1 = Thruster_Config.ku1; %[rate parameter]
+%ku2 = Thruster_Config.ku2; %[rate parameter]
+cT1 = Thruster_Config.cT1;
+cT2 = Thruster_Config.cT2;
+dT1 = Thruster_Config.dT1;
+dT2 = Thruster_Config.dT2;
+cQ1 = Thruster_Config.cQ1;
+cQ2 = Thruster_Config.cQ2;
+dQ1 = Thruster_Config.dQ1;
+dQ2 = Thruster_Config.dQ2;
+%alpha2 = Thruster_Config.alpha2;
+%beta2 = Thruster_Config.beta2;
 
 %Run Simulation
 [t_fit, T_fit, Q_fit, n_fit] = sim_thruster(n_command , rho, Thruster_Config, dt);

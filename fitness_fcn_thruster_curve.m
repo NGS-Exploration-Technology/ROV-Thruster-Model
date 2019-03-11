@@ -6,13 +6,7 @@ function loss = fitness_fcn_thruster_curve(x, constants, n_command, dt, t_Data, 
 %Thruster_Config.g = 32.5; %[rps/throttle]
 rho = 1027; %[kg/m^3] Density of seawater
 Thruster_Config.D = 0.1151; %[m] propellor diameter
-Thruster_Config.kt = (rho*.1*(pi/4)*(Thruster_Config.D^2))^-1; % Thrust coeff from Fossen paper
-Thruster_Config.kn1 = abs(x(1)); %[rate parameter]
-Thruster_Config.kn2 = abs(x(2)); %[rate parameter]
-Thruster_Config.kq = abs(x(3)); %[rate parameter]
-Thruster_Config.kv = abs(x(4)); %[rate parameter]
-Thruster_Config.ku1 = abs(x(5)); %[rate parameter]
-Thruster_Config.ku2 = abs(x(6)); %[rate parameter]
+Thruster_Config.kv = abs(x(1)); %[rate parameter]
 Thruster_Config.cT1 = constants(1);
 Thruster_Config.cT2 = constants(2);
 Thruster_Config.dT1 = constants(3);
@@ -21,8 +15,6 @@ Thruster_Config.cQ1 = constants(5);
 Thruster_Config.cQ2 = constants(6);
 Thruster_Config.dQ1 = constants(7);
 Thruster_Config.dQ2 = constants(8);
-Thruster_Config.alpha2 = abs(x(7));
-Thruster_Config.beta2 = abs(x(8));
 Thruster_Config.RH_prop = (constants(5)<0); %1 for RH, 0 for LH
 
 %Run Simulation

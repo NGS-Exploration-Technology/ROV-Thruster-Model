@@ -1,4 +1,4 @@
-function [n, T, Q] = Thruster_Model(n0, T0, Q0, n_command , rho, Thruster_Config, dt)
+function [n, T, Q] = Thruster_Model(n0,n_command , rho, Thruster_Config, dt)
 %THRUSTER_MODEL time varying dynamic model of ROV thruster
 %function [n, T, Q] = Thruster_Model(Va, n0, Throttle , rho, Thruster_Params, dt)
 % T(t)=Ta+(To-Ta)*exp(-kt) 
@@ -103,7 +103,7 @@ T = rho*D^4*alpha1; %[N] thrust
 if Thruster_Config.RH_prop
     Q = rho*D^5*beta1; %[Nm] torque
 else
-    Q = rho*D^5*beta1; %[Nm] torque
+    Q = -rho*D^5*beta1; %[Nm] torque
 end
 if (isnan(T))
     keyboard;

@@ -6,7 +6,7 @@ Table_Throttles = Thrust_to_Throttle_Table(:,2);
 
 %Throttle = 5*thrust_to_throttle(Thrust, Table_Thrusts, Table_Throttles);
 
-n_command = -2305;
+n_command = 1000;
 
 %Set up model params
 n_samples = 10000;
@@ -16,7 +16,7 @@ dt = 0.001; %[s]
 rho = 1027; %[kg/m^3] Density of seawater
 
 load('Thruster_Config2.mat'); %Load previously fit thruster model params
-Thruster_Config.RH_prop = 0;
+Thruster_Config.RH_prop = 1;
 
 [t_fit, T_fit, Q_fit, n_fit] = sim_thruster(n_command_vector , rho, Thruster_Config, dt);
 
@@ -25,7 +25,6 @@ figure;
 subplot(3,1,1);
 plot(t_fit, T_fit, '--k'); 
 ylabel('Force [N]');
-legend('Experimental', 'Model');
 %axis([0 3 0 100]);
 grid on;
 
