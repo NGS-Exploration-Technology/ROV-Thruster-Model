@@ -6,7 +6,9 @@ Table_Throttles = Thrust_to_Throttle_Table(:,2);
 
 %Throttle = 5*thrust_to_throttle(Thrust, Table_Thrusts, Table_Throttles);
 
-n_command = 1000;
+%n_command = 1000;
+Throttle = 0.1;
+n_command = throttle_to_n(Throttle,Table_Throttles, Table_n);
 
 %Set up model params
 n_samples = 10000;
@@ -36,4 +38,5 @@ grid on;
 subplot(3,1,3);
 plot(t_fit, n_fit, '--k');
 ylabel('Prop Speed [rpm]');
+grid on;
 %axis([0 3 -1 35]);

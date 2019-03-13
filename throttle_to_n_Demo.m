@@ -1,4 +1,4 @@
-Throttle = -3; %[N]
+Throttle = -5; %[V]
 
 Throttle_to_n_Table = csvread('Throttle_to_n_Table.csv');
 Table_Throttles = Throttle_to_n_Table(:,1);
