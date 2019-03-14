@@ -2,7 +2,7 @@ Thrust_to_Throttle_Table = csvread('Thrust_to_Throttle_Table.csv');
 Table_Thrusts = Thrust_to_Throttle_Table(:,1);
 Table_Throttles = Thrust_to_Throttle_Table(:,2);
 
-Thrust = 7.2; %[N]
+Thrust = 16; %[N]
 
 Throttle = 5*thrust_to_throttle(Thrust, Table_Thrusts, Table_Throttles);
 
