@@ -1,24 +1,24 @@
 function [t_n, T, Q, n] = sim_thruster_throttle(Throttle, rho, Thruster_Params, dt)
 %SIM_THRUSTER to fit a thrust throttle curve to a model
-%function [t_n, T, Q, n] = sim_thruster_throttle(Throttle, rho, Thruster_Params, Table_Throttles, Table_n, dt)
+%function [t_n, T, Q, n] = sim_thruster_throttle(Throttle, rho, Thruster_Params, dt)
 % T(t)=Ta+(To-Ta)*exp(-kt) 
 %
 %inputs:
-%   Throttle = throttle setting vector (-1 to +1)
+%   Throttle = [V] throttle setting vector (-5 to +5)
 %   rho = density of fluid
 %   Thruster_Params = data structure of params (g, k, D, alpha1, alpha2, beta1, beta2)
-%   Table_Throttles = Throttle-to-n, throttle vector
-%   Table_n = Throttle-to-n, n vector
 %   dt = simulation time step
 %
 %outputs:
 %
 %function to approximate T(t)=Ta+(To-Ta)*exp^{-kt}  
 %
-%dT/dt=-k(T-Ta). 
+%dT/dt=-k(T-Ta)
 %T(0)=To  
 %
 %http://www.ugrad.math.ubc.ca/coursedoc/math100/notes/diffeqs/cool.html
+%
+%See also THRUSTER_THROTTLE_MODEL
 
 %set parameters
 

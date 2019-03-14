@@ -64,12 +64,12 @@ end
     Thruster_Config(1).dQ2 = 0.1696; %Piecewise Beta1 forward deadband
     Thruster_Config(1).alpha2 = 0.0011; %Thrust coefficient 2 (1 is calculated)
     Thruster_Config(1).beta2 = 0.0030; %Torque coefficient 2 (1 is calculated)
-    Thruster_Config(1).RH_prop = 1; %1 = RH prop, 0 = LH prop
+    Thruster_Config(1).RH_prop = 0; %1 = RH prop, 0 = LH prop
     %Thruster 2
-    Thruster_Config(2).position(1)= 0.24892; %[m] x Location of Thruster on frame WRT center of mass
-    Thruster_Config(2).position(2) = -0.219202; %[m] y Location of Thruster on frame
+    Thruster_Config(2).position(1) = 0.24892; %[m] x Location of Thruster on frame
+    Thruster_Config(2).position(2) = 0.219202; %[m] y Location of Thruster on frame
     Thruster_Config(2).position(3) = -0.019812; %[m] z Location of Thruster on frame
-    Thruster_Config(2).yaw_angle = 30; %[deg] Angle of Thruster from X
+    Thruster_Config(2).yaw_angle = -30; %[deg] Angle of Thruster from X
     Thruster_Config(2).pitch_angle = -30; %[deg] Angle of Thruster from XY plane
     Thruster_Config(2).max_thrust = 57.83; %[N] maximum thruster output for thruster 1
     Thruster_Config(2).d_thrust_dt = 1156; %[N/s] maximum allowable change in thrust for thruster 1
@@ -88,8 +88,8 @@ end
     Thruster_Config(2).beta2 = 0.0030; %Torque coefficient 2 (1 is calculated)
     Thruster_Config(2).RH_prop = 1; %1 = RH prop, 0 = LH prop
     %Thruster 3
-    Thruster_Config(3).position(1)= 0.24892; %[m] x Location of Thruster on frame WRT center of mass
-    Thruster_Config(3).position(2) = -0.219202; %[m] y Location of Thruster on frame
+    Thruster_Config(3).position(1) = -0.20828; %[m] x Location of Thruster on frame
+    Thruster_Config(3).position(2) = 0.2413; %[m] y Location of Thruster on frame
     Thruster_Config(3).position(3) = -0.019812; %[m] z Location of Thruster on frame
     Thruster_Config(3).yaw_angle = 30; %[deg] Angle of Thruster from X
     Thruster_Config(3).pitch_angle = -30; %[deg] Angle of Thruster from XY plane
@@ -110,10 +110,10 @@ end
     Thruster_Config(3).beta2 = 0.0030; %Torque coefficient 2 (1 is calculated)
     Thruster_Config(3).RH_prop = 0; %1 = RH prop, 0 = LH prop
     %Thruster 4
-    Thruster_Config(4).position(1)= 0.24892; %[m] x Location of Thruster on frame WRT center of mass
-    Thruster_Config(4).position(2) = -0.219202; %[m] y Location of Thruster on frame
+    Thruster_Config(4).position(1) = -0.20828; %[m] x Location of Thruster on frame
+    Thruster_Config(4).position(2) = -0.2413; %[m] y Location of Thruster on frame
     Thruster_Config(4).position(3) = -0.019812; %[m] z Location of Thruster on frame
-    Thruster_Config(4).yaw_angle = 30; %[deg] Angle of Thruster from X
+    Thruster_Config(4).yaw_angle = -30; %[deg] Angle of Thruster from X
     Thruster_Config(4).pitch_angle = -30; %[deg] Angle of Thruster from XY plane
     Thruster_Config(4).max_thrust = 57.83; %[N] maximum thruster output for thruster 1
     Thruster_Config(4).d_thrust_dt = 1156; %[N/s] maximum allowable change in thrust for thruster 1
@@ -132,11 +132,11 @@ end
     Thruster_Config(4).beta2 = 0.0030; %Torque coefficient 2 (1 is calculated)
     Thruster_Config(4).RH_prop = 0; %1 = RH prop, 0 = LH prop
     %Thruster 5
-    Thruster_Config(5).position(1)= 0.24892; %[m] x Location of Thruster on frame WRT center of mass
-    Thruster_Config(5).position(2) = -0.219202; %[m] y Location of Thruster on frame
-    Thruster_Config(5).position(3) = -0.019812; %[m] z Location of Thruster on frame
-    Thruster_Config(5).yaw_angle = 30; %[deg] Angle of Thruster from X
-    Thruster_Config(5).pitch_angle = -30; %[deg] Angle of Thruster from XY plane
+    Thruster_Config(5).position(1) = 0; %[m] x Location of Thruster on frame
+    Thruster_Config(5).position(2) = -0.1651; %[m] y Location of Thruster on frame
+    Thruster_Config(5).position(3) = -0.05715; %[m] z Location of Thruster on frame
+    Thruster_Config(5).yaw_angle = 90; %[deg] Angle of Thruster from X
+    Thruster_Config(5).pitch_angle = -85; %[deg] Angle of Thruster from XY plane
     Thruster_Config(5).max_thrust = 57.83; %[N] maximum thruster output for thruster 1
     Thruster_Config(5).d_thrust_dt = 1156; %[N/s] maximum allowable change in thrust for thruster 1
     Thruster_Config(5).g = 32.5; %[N/Throttle] throttle gain parameter for thruster 1
@@ -152,13 +152,13 @@ end
     Thruster_Config(5).dQ2 = 0.1696; %Piecewise Beta1 forward deadband
     Thruster_Config(5).alpha2 = 0.0011; %Thrust coefficient 2 (1 is calculated)
     Thruster_Config(5).beta2 = 0.0030; %Torque coefficient 2 (1 is calculated)
-    Thruster_Config(5).RH_prop = 1; %1 = RH prop, 0 = LH prop
+    Thruster_Config(5).RH_prop = 0; %1 = RH prop, 0 = LH prop
     %Thruster 6
-    Thruster_Config(6).position(1)= 0.24892; %[m] x Location of Thruster on frame WRT center of mass
-    Thruster_Config(6).position(2) = -0.219202; %[m] y Location of Thruster on frame
-    Thruster_Config(6).position(3) = -0.019812; %[m] z Location of Thruster on frame
-    Thruster_Config(6).yaw_angle = 30; %[deg] Angle of Thruster from X
-    Thruster_Config(6).pitch_angle = -30; %[deg] Angle of Thruster from XY plane
+    Thruster_Config(6).position(1) = 0; %[m] x Location of Thruster on frame
+    Thruster_Config(6).position(2) = 0.1651; %[m] y Location of Thruster on frame
+    Thruster_Config(6).position(3) = -0.05715; %[m] z Location of Thruster on frame
+    Thruster_Config(6).yaw_angle = -90; %[deg] yaw angle of Thruster from X
+    Thruster_Config(6).pitch_angle = -85; %[deg] pitch ngle of Thruster from XY plane
     Thruster_Config(6).max_thrust = 57.83; %[N] maximum thruster output for thruster 1
     Thruster_Config(6).d_thrust_dt = 1156; %[N/s] maximum allowable change in thrust for thruster 1
     Thruster_Config(6).g = 32.5; %[N/Throttle] throttle gain parameter for thruster 1
@@ -174,8 +174,9 @@ end
     Thruster_Config(6).dQ2 = 0.1696; %Piecewise Beta1 forward deadband
     Thruster_Config(6).alpha2 = 0.0011; %Thrust coefficient 2 (1 is calculated)
     Thruster_Config(6).beta2 = 0.0030; %Torque coefficient 2 (1 is calculated)
-    Thruster_Config(6).RH_prop = 0; %1 = RH prop, 0 = LH prop
-            
+    Thruster_Config(6).RH_prop = 1; %1 = RH prop, 0 = LH prop
+    
+    %Calculate unit direction vectors for each thruster
     Thruster_Count = length(Thruster_Config);
     u_hat = zeros(3,1);
     index = 0;

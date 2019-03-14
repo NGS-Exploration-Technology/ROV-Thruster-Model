@@ -7,7 +7,7 @@ function [n, T, Q] = Thruster_Throttle_Model(n0,Throttle, rho, Thruster_Config, 
 %   n0 = [rps] current revolutions per second
 %   Throttle = current throttle (-5 to 5)
 %   rho = density of seawater
-%   Thruster_Params = parameters of the thruster model
+%   Thruster_Config = Parameters of a thruster (see setup_thrusters_...)
 %   dt = simulation time step
 %
 %outputs:
@@ -21,12 +21,12 @@ function [n, T, Q] = Thruster_Throttle_Model(n0,Throttle, rho, Thruster_Config, 
 %T(0)=To  
 %
 %http://www.ugrad.math.ubc.ca/coursedoc/math100/notes/diffeqs/cool.html
+%
+%See also SIM_THRUSTER_THROTTLE SIM_ROV
 
-Table_Throttles = Thruster_Config.Table_Throttles;
-Table_n = Thruster_Config.Table_n;
+%Convert throttle voltage to commanded rpm
+n_command = throttle_to_n(Throttle,Thruster_Config.Table_Throttles, Thruster_Config.Table_n);
 
-n_command = throttle_to_n(Throttle,Table_Throttles, Table_n);
-keyboard;
 %Populate thruster params
 D = Thruster_Config.D; %[m] propellor diameter
 kv = Thruster_Config.kv; %[rate parameter]
@@ -39,26 +39,9 @@ cQ2 = Thruster_Config.cQ2;
 dQ1 = Thruster_Config.dQ1;
 dQ2 = Thruster_Config.dQ2;
 
-%Va = 1E-1000;
-
 %Update thruster rate
-% n_command = g*Throttle;
-% d_n = -k*(n0-n_command);
-if Thruster_Config.RH_prop
-    d_n = kv*(n_command-n0); % RH prop
-else
-    d_n = kv*(n_command-n0); % LH prop
-end
-
-n = n0+d_n*dt;
-
-%Calculate Advance Coefficient
-if (n==0) 
-   n = 1E-100;
-end
-if isinf(n)
-    n=1E100*sign(n);
-end
+d_n = -kv*(n0-n_command);
+n = n0+d_n*dt; %[rpm] update current thruster rpm
 
 % Calculate deadband piecewise quadratic coefficients:
 if n*abs(n)<=dT1
@@ -79,12 +62,10 @@ end
 %Calculate Thrust
 T = rho*D^4*alpha1; %[N] thrust
 
-%Calculate Torque
+%Calculate Torque (based on right or left hand torque)
 if Thruster_Config.RH_prop
     Q = rho*D^5*beta1; %[Nm] torque
 else
     Q = -rho*D^5*beta1; %[Nm] torque
 end
-if (isnan(T))
-    keyboard;
-end
+
