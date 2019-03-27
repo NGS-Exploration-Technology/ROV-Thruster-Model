@@ -6,7 +6,7 @@ lpFilt = designfilt('lowpassiir','FilterOrder',4, ...
          'PassbandFrequency',15,'PassbandRipple',0.01, ...
          'StopbandAttenuation', 120, 'SampleRate',1e3);
 
-A = csvread('201807161552_Final_With_Tach.csv');
+A = csvread('201903151222-Thrust-no-flow.csv');
 
 t_raw = A(:,2);
 t = t_raw(1:8001);
@@ -16,7 +16,7 @@ n_raw = 477.43*A(:,21)+5.3255; % Linear regression estimate of rpm from Tach Vol
 % n = n_lpf(2600:8000);
 % n = movmean(n_raw(2500:12000),70);
 n_mf = median_filter(n_raw,20);
-n = n_mf(2515:10515);
+n = n_mf(1:end);
 
 % figure
 % subplot(2,1,1);
@@ -27,19 +27,19 @@ n = n_mf(2515:10515);
 % grid
 % keyboard
 
-Fx_raw = A(:,15)*-1; % -1 Multiplier because test was in reverse direction
+Fx_raw = A(:,16)*-1; % -1 Multiplier because test was in reverse direction
 %Fx_movmean = movmean(Fx_raw,20);
 %Fx = Fx_movmean(6442:11441);
 Fx_lpf = filter(lpFilt,Fx_raw);
 Fx_mf = median_filter(Fx_lpf,10);
-Fx = Fx_mf(2540:10540);
+Fx = Fx_mf(1:end);
 
 Mx_raw = A(:,18)*-1; % -1 Multiplier because test was in reverse direction
 %Mx_movmean = movmean(Mx_raw,20);
 %Mx = Mx_movmean(6442:11441);
 Mx_lpf = filter(lpFilt,Mx_raw);
 Mx_mf = median_filter(Mx_lpf,10);
-Mx = Mx_mf(2530:10530);
+Mx = Mx_mf(1:end);
 
 % figure;
 % subplot(2,1,1);
