@@ -70,7 +70,7 @@ kv2 = 6770*2*pi/60;
 kv1 = kv2;
 dv1 = -.8475;
 dv2 = .9254;
-cTn = .004243*1.725*1.8;
+cTn = .004243*1.725*1.8*.5;
 cTv = -9.435*30;
 cQn = .000626*3;
 cQv = -1.212*10;
@@ -119,5 +119,8 @@ Q(end) = rho*Diam^5*(cQn*n(end)*abs(n(end))+cQv*v(end)*abs(v(end)));
 
 n_old = -149:.1:150;
 hold on
-plot(n,T,n,rho*Diam^4*(cTn*n.*abs(n)-1.48693*abs(n).*v),n_old,rho*Diam^4*Thruster_Config.cT1/((2*pi/60)^2)*n_old.*abs(n_old),'--k')
+plot(n,T,n,rho*Diam^4*(cTn*n.*abs(n)-1.48693*.7*abs(n).*v),n_old,rho*Diam^4*.7*Thruster_Config.cT1/((2*pi/60)^2)*n_old.*abs(n_old),'--k')
+xlabel('Propeller Velocity, n, [rad/s]')
+ylabel('Forward Thrust, T, [N]')
+legend('Experiment','Two-State','Fossen','Single-State','Location','Northwest')
 hold off

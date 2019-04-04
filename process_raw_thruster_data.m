@@ -6,7 +6,7 @@ lpFilt = designfilt('lowpassiir','FilterOrder',4, ...
          'PassbandFrequency',15,'PassbandRipple',0.01, ...
          'StopbandAttenuation', 120, 'SampleRate',1e3);
 
-A = csvread('201903151222-Thrust-no-flow.csv');
+A = csvread('201808061450_3V.csv');
 
 t_raw = A(:,2);
 t = t_raw(1:8001);
@@ -18,16 +18,16 @@ n_raw = 477.43*A(:,21)+5.3255; % Linear regression estimate of rpm from Tach Vol
 n_mf = median_filter(n_raw,20);
 n = n_mf(1:end);
 
-% figure
+figure
 % subplot(2,1,1);
-% plot(t_raw(1:5481),n_raw(2520:8000)); ylabel('[rpm]'); grid on;
+plot(t_raw(1:end),n_raw(1:end)); ylabel('[rpm]'); grid on;
 % subplot(2,1,2);
 % plot(t,n)
 % xlabel('time, [s]'),ylabel('[rpm]')
 % grid
 % keyboard
 
-Fx_raw = A(:,16)*-1; % -1 Multiplier because test was in reverse direction
+Fx_raw = A(:,15)*-1; % -1 Multiplier because test was in reverse direction
 %Fx_movmean = movmean(Fx_raw,20);
 %Fx = Fx_movmean(6442:11441);
 Fx_lpf = filter(lpFilt,Fx_raw);
@@ -41,7 +41,7 @@ Mx_lpf = filter(lpFilt,Mx_raw);
 Mx_mf = median_filter(Mx_lpf,10);
 Mx = Mx_mf(1:end);
 
-% figure;
+figure;
 % subplot(2,1,1);
 % plot(t_raw(1:5501),Mx_raw(2500:8000)); ylabel('[Nm]'); grid on;
 % subplot(2,1,2); 
@@ -49,7 +49,7 @@ Mx = Mx_mf(1:end);
 
 % figure;
 % subplot(2,1,1);
-% plot(t_raw(1:5501),Fx_raw(2500:8000)); ylabel('[N]'); grid on;
+plot(t_raw(1:end),Fx_raw(1:end)); ylabel('[N]'); grid on;
 % subplot(2,1,2); 
 % plot(t,Fx); xlabel('time [s]'); ylabel('[N]'); grid on;
 
@@ -59,4 +59,4 @@ Mx = Mx_mf(1:end);
 % f = (0:n-1)*(fs/n);     % frequency range
 % power = abs(y).^2/n;    % power of the DFT
 % figure; plot(f,power); grid on;
-% keyboard;
+keyboard;
