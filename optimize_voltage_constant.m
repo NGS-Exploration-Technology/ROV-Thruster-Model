@@ -22,19 +22,19 @@ dv2 = .86;
 % Read in data:
 Ap5 = csvread('201807201712_Air_RPM_Data.csv');
 tp5 = Ap5(1:length(lenp5),2);
-np5 = (477.43*Ap5(lenp5,21)+5.3255)*2*pi/60;
+np5 = 49.9723*Ap5(lenp5,21);
 vp5 = 5*ones(length(lenp5),1);
 Ap3 = csvread('201808061450_3V.csv');
 tp3 = Ap3(1:length(lenp3),2);
-np3 = (477.43*Ap3(lenp3,21)+5.3255)*2*pi/60;
+np3 = 49.9723*Ap3(lenp3,21);
 vp3 = 3*ones(length(lenp3),1);
 Am3 = csvread('201808061453_-3V.csv');
 tm3 = Am3(1:length(lenm3),2);
-nm3 = -(477.43*Am3(lenm3,21)+5.3255)*2*pi/60;
+nm3 = -49.9723*Am3(lenm3,21);
 vm3 = -3*ones(length(lenm3),1);
 Am5 = csvread('201808061456_-5V.csv');
 tm5 = Am5(1:length(lenm5),2);
-nm5 = -(477.43*Am5(lenm5,21)+5.3255)*2*pi/60;
+nm5 = -49.9723*Am5(lenm5,21);
 vm5 = -5*ones(length(lenm5),1);
 dt = tp5(2)-tp5(1);
 
@@ -45,8 +45,8 @@ t = {tp5,tp3,tm3,tm5};
 n = {np5,np3,nm3,nm5};
 v = {vp5,vp3,vm3,vm5};
 
-plot(tm3,nm3,tm3,nm3mf)
-grid
+% plot(tm3,nm3,tm3,nm3mf)
+% grid
 
 % fminsearch operation:
 f = @(x)fitness_fcn_rpm_voltage(x,t,n,v,dt);
@@ -81,28 +81,20 @@ for i = 2:length(n_fitm5)
 end
 
 figure
+subplot(4,1,1)
 plot(tp5,np5,tp5,n_fitp5,'--k')
-legend('Data','Model')
-xlabel('Time, t, [sec]')
-ylabel('Rotor Speed, n, [rpm]')
 grid
-figure
+subplot(4,1,2)
 plot(tp3,np3,tp3,np3mf,tp3,n_fitp3,'--k')
 legend('Data','Filter','Model')
-xlabel('Time, t, [sec]')
-ylabel('Rotor Speed, n, [rpm]')
+ylabel('Rotor Speed, n, [rad/s]')
 grid
-figure
+subplot(4,1,3)
 plot(tm3,nm3,tm3,nm3mf,tm3,n_fitm3,'--k')
-legend('Data','Filter','Model')
-xlabel('Time, t, [sec]')
-ylabel('Rotor Speed, n, [rpm]')
 grid
-figure
+subplot(4,1,4)
 plot(tm5,nm5,tm5,n_fitm5,'--k')
-legend('Data','Model')
 xlabel('Time, t, [sec]')
-ylabel('Rotor Speed, n, [rpm]')
 grid
 
 end
