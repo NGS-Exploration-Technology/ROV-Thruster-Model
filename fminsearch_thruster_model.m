@@ -12,7 +12,6 @@ options.PlotFcns = {@optimplotfval,@optimplotx};
 
 % Define some parameters
 [kn,kv1,kv2] = optimize_voltage_constant();
-% [kV,kVV,kTV] = optimize_ambient_dynamics();
 [cTn,cQn] = Generate_Thrust_Curves();
 lenp3 = 4300:13500;
 lenp2 = 3450:12500;
@@ -27,25 +26,25 @@ tp3 = Datap3(1:length(lenp3),2);
 np3 = 49.9723*Datap3(lenp3,21);
 Tp3 = -Datap3(lenp3,16);
 Qp3 = Datap3(lenp3,19);
-up3 = [(linspace(dv2,3,1700)).';3*ones(length(lenp3)-1700,1)];
+up3 = [(linspace(dv2,3,1600)).';3*ones(length(lenp3)-1600,1)];
 Datap2 = csvread('2statep2V.csv');
 tp2 = Datap2(1:length(lenp2),2);
 np2 = 49.9723*Datap2(lenp2,21);
 Tp2 = -Datap2(lenp2,16);
 Qp2 = Datap2(lenp2,19);
-up2 = [(linspace(dv2,2,1300)).';2*ones(length(lenp2)-1300,1)];
+up2 = [(linspace(dv2,2,1200)).';2*ones(length(lenp2)-1200,1)];
 Datam2 = csvread('2statem2V.csv');
 tm2 = Datam2(1:length(lenm2),2);
 nm2 = -49.9723*Datam2(lenm2,21);
 Tm2 = -Datam2(lenm2,16)-1.8;
 Qm2 = Datam2(lenm2,19);
-um2 = [(linspace(dv1,-2,1300)).';-2*ones(length(lenm2)-1300,1)];
+um2 = [(linspace(dv1,-2,1200)).';-2*ones(length(lenm2)-1200,1)];
 Datam3 = csvread('2statem3V.csv');
 tm3 = Datam3(1:length(lenm3),2);
 nm3 = -49.9723*Datam3(lenm3,21);
 Tm3 = -Datam3(lenm3,16);
 Qm3 = Datam3(lenm3,19);
-um3 = [(linspace(dv1,-3,1600)).';-3*ones(length(lenm3)-1600,1)];
+um3 = [(linspace(dv1,-3,1500)).';-3*ones(length(lenm3)-1500,1)];
 dt = tm3(2)-tm3(1);
 
 % figure
@@ -65,7 +64,7 @@ u = {up3,up2,um2,um3};
 %define Fitness Function
 f = @(x)fitness_fcn_thruster_curve(x,t,n,u,dt,cQn,kv1,kv2,dv1,dv2);
 
-[x fval exitflag opt_output] = fminsearch(f,[13.9141 .0038], options)
+[x fval exitflag opt_output] = fminsearch(f,[kn .0038], options)
 
 kn = x(1);
 kq = x(2);
@@ -80,8 +79,8 @@ Thruster_Config.cQn = cQn;
 Thruster_Config.kn = kn;
 Thruster_Config.kq = kq;
 
-kq = ((59.44/110.1)*kv2*(3-dv2)-kv2*(2-dv2))/(59.44*110-59.44^2);
-kn = (kv2*(3-dv2)-kq*110.1^2)/110.1;
+% kq = ((59.44/110.1)*kv2*(3-dv2)-kv2*(2-dv2))/(59.44*110-59.44^2);
+% kn = (kv2*(3-dv2)-kq*110.1^2)/110.1;
 
 % Simulate model:
 n_fitp3 = zeros(length(tp3),1);
