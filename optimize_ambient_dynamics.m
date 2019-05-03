@@ -1,4 +1,4 @@
-function x = optimize_ambient_dynamics()
+function [kV,kVV,kTV] = optimize_ambient_dynamics()
 % Read in ambient velocity data and fit to first order model
 
 % Set fminsearch options:

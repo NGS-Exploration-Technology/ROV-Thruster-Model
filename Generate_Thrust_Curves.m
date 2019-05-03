@@ -1,4 +1,4 @@
-function x = Generate_Thrust_Curves()
+function [cTn,cQn] = Generate_Thrust_Curves()
 
 %Set fminsearch options
 options.Display= 'final';
@@ -11,13 +11,13 @@ options.OutputFcn = [];
 options.PlotFcns = {@optimplotfval,@optimplotx};
 
 % Read in data:
-A = csvread('Tach_RPM_Thrust_Data.csv');
-n = A(:,7)*2*pi/60;
-T = A(:,5);
-Q = A(:,6);
+A = csvread('Steady_State_Data.csv');
+n = A(:,4);
+T = A(:,2);
+Q = A(:,3);
 
 % fminsearch operation:
-f = @(x)fitness_fcn_rpm_thrust_torque(x,n,T,Q);
+f = @(x)sqrt(mean((x(1)*n.*abs(n)-T).^2)+mean((x(2)*n.*abs(n)-Q).^2));
 
 [x,fval,exitflag,opt_output] = fminsearch(f,[1 1], options)
 
@@ -37,7 +37,7 @@ xlabel('Propeller Speed [rad/s]','FontSize',font,'FontName','Times New Roman')
 ylabel('Thrust [N]','FontSize',font,'FontName','Times New Roman')
 
 yyaxis right
-plot(n,-Q,'o',n,-Q_fit,'--r','LineWidth',width)
+plot(n,Q,'o',n,Q_fit,'--r','LineWidth',width)
 ylabel('Torque [Nm]','FontSize',font,'FontName','Times New Roman')
 
 legend({'Experiment','Model','Experiment','Model'},'FontSize',font,'FontName','Times New Roman','Location','Northwest')

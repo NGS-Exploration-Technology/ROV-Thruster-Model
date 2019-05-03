@@ -1,12 +1,10 @@
-function loss = fitness_fcn_rpm_voltage(x,t,n,v,dt)
+function loss = fitness_fcn_rpm_voltage(x,t,n,v,dt,dv1,dv2)
 % Fitness function for 1st order rpm model in air
 
 % Preallocate constants:
 kn = x(1);
 kv1 = x(2);
 kv2 = x(3);
-dv1 = -.83;
-dv2 = .86;
 
 % Extract data:
 tp5 = t{1};

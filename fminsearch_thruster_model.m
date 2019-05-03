@@ -1,3 +1,5 @@
+clear; close all; clc;
+
 %Set fminsearch options
 options.Display= 'final';
 options.MaxFunEvals = 5000;
@@ -8,119 +10,157 @@ options.FunValCheck= [];
 options.OutputFcn = [];
 options.PlotFcns = {@optimplotfval,@optimplotx};
 
-% Set pso options:
-% psooptions = optimoptions('particleswarm');
-% psooptions.CreationFcn= @pswcreationuniform;
-% psooptions.Display= 'iter';
-% psooptions.FunctionTolerance= 1.0000e-12;
-% psooptions.HybridFcn= [];
-% psooptions.InertiaRange= [0.1000 1.1000];
-% psooptions.InitialSwarmMatrix= [];
-% psooptions.InitialSwarmSpan= 100000;
-% psooptions.MaxIterations= Inf;
-% psooptions.MaxStallIterations= 1000;
-% psooptions.MaxStallTime= Inf;
-% psooptions.MaxTime= Inf;
-% psooptions.MinNeighborsFraction= 0.2500;
-% psooptions.ObjectiveLimit= -Inf;
-% psooptions.OutputFcn=[];
-% psooptions.PlotFcn= {[@pswplotbestf]};
-% psooptions.SelfAdjustmentWeight= 1.4900;
-% psooptions.SocialAdjustmentWeight= 1.4900;
-% psooptions.SwarmSize = 30;
-% psooptions.UseParallel= false;
-% psooptions.UseVectorized= false;
+% Define some parameters
+[kn,kv1,kv2] = optimize_voltage_constant();
+% [kV,kVV,kTV] = optimize_ambient_dynamics();
+[cTn,cQn] = Generate_Thrust_Curves();
+lenp3 = 4300:13500;
+lenp2 = 3450:12500;
+lenm2 = 4550:13500;
+lenm3 = 4500:14000;
+dv1 = -.83;
+dv2 = .86;
 
-%Data to fit (Newton's law of cooling)
-%Ta_Data = 20;
-%k_Data = 20;
-%t_Data = linspace(0,20,10000);
-%Data=Ta_Data+(To-Ta_Data)*exp(-k_Data*t_Data) + 0.1*randn(size(t_Data));
+% Extract data
+Datap3 = csvread('2statep3V.csv');
+tp3 = Datap3(1:length(lenp3),2);
+np3 = 49.9723*Datap3(lenp3,21);
+Tp3 = -Datap3(lenp3,16);
+Qp3 = Datap3(lenp3,19);
+up3 = [(linspace(dv2,3,1700)).';3*ones(length(lenp3)-1700,1)];
+Datap2 = csvread('2statep2V.csv');
+tp2 = Datap2(1:length(lenp2),2);
+np2 = 49.9723*Datap2(lenp2,21);
+Tp2 = -Datap2(lenp2,16);
+Qp2 = Datap2(lenp2,19);
+up2 = [(linspace(dv2,2,1300)).';2*ones(length(lenp2)-1300,1)];
+Datam2 = csvread('2statem2V.csv');
+tm2 = Datam2(1:length(lenm2),2);
+nm2 = -49.9723*Datam2(lenm2,21);
+Tm2 = -Datam2(lenm2,16)-1.8;
+Qm2 = Datam2(lenm2,19);
+um2 = [(linspace(dv1,-2,1300)).';-2*ones(length(lenm2)-1300,1)];
+Datam3 = csvread('2statem3V.csv');
+tm3 = Datam3(1:length(lenm3),2);
+nm3 = -49.9723*Datam3(lenm3,21);
+Tm3 = -Datam3(lenm3,16);
+Qm3 = Datam3(lenm3,19);
+um3 = [(linspace(dv1,-3,1600)).';-3*ones(length(lenm3)-1600,1)];
+dt = tm3(2)-tm3(1);
 
-%Data to fit (Charge on a capacitor)
-%t = linspace(0,5,10000); %[s]
-%C = 2E-6; %[F]
-%R = 1E5; %[Ohms]
-%Vb = 0.5E6; %[V]
-%Q = C*Vb*(1-exp(-t/(R*C))) + 1E-8*randn(size(t));
-[t, n, Fx, Mx] = process_raw_thruster_data();
+% figure
+% plot(tm3,nm3)
+% grid
+% figure
+% plot(tm3,Tm3)
+% grid
+% figure
+% plot(tm3,Qm3)
+% grid
 
-t_Data = t;
-n_Data = n;
-T_Data = Fx;
-Q_Data = Mx;
-
-%Set up model params
-n_samples = length(t_Data);
-Throttle = 5*ones(1,n_samples);
-Va = zeros(size(Throttle));
-dt = 0.001;
-
-constants = Generate_Thrust_Curves()
-prop_const = optimize_voltage_constant()
+t = {tp3,tp2,tm2,tm3};
+n = {np3,np2,nm2,nm3};
+u = {up3,up2,um2,um3};
 
 %define Fitness Function
-%f = @(x)fitness_fcn_thruster_curve(x, To, Ta, dt, t_Data, Data);
-f = @(x)fitness_fcn_thruster_curve(x, constants, prop_const, Va, Throttle, dt, t_Data, n_Data, T_Data, Q_Data);
+f = @(x)fitness_fcn_thruster_curve(x,t,n,u,dt,cQn,kv1,kv2,dv1,dv2);
 
-[x fval exitflag opt_output] = fminsearch(f,[750 10 .2*constants(2) 25*constants(6)], options)
-% [x fval exitflag opt_output] = particleswarm(f,8,zeros(1,8),500*ones(1,8),psooptions)
+[x fval exitflag opt_output] = fminsearch(f,[13.9141 .0038], options)
 
-% x = [10 10 1 43042.5 .1 .1 .00000000000001 .000000000000001];
-% x = [73.9277 .1 .1 1950*73.9277 .1 .1 0 0];
-% x = [11.4875 .0001 .437 5152.929 1.38857 4.092 .0001 .000000001];
-% x = [1.0894e-13 .0043 70.7035 4676.2 2.2955 179.7885 5.5639e-06 8.8988e-08];
-% x = [10 0 79500 5500 0 10 2*constants(2) 2*constants(6)];
-% x = [10 0 2500 5500 0 10 2*constants(2) 2*constants(6)];
-% x = [750 10 .2*constants(2) 25*constants(6)];
+kn = x(1);
+kq = x(2);
 
-%simulate and plot result
-rho = 1027; %[kg/m^3] Density of seawater
-Thruster_Config.D = 0.1151; %[m] propellor diameter
-Thruster_Config.L = 0.075; %[m] duct length
-Thruster_Config.kt = (2*rho*Thruster_Config.L*(pi/4)*(Thruster_Config.D^2))^-1; % Thrust coeff from Fossen paper
-Thruster_Config.kn1 = abs(prop_const(1)); %[rate parameter]
-Thruster_Config.kv = abs(prop_const(2)); %[rate parameter]
-Thruster_Config.kq = abs(x(1)); %[rate parameter]
-Thruster_Config.ku1 = abs(x(2)); %[rate parameter]
-Thruster_Config.ku2 = Thruster_Config.L^-1; %[rate parameter]
-Thruster_Config.cT1 = constants(1);
-Thruster_Config.cT2 = constants(2);
-Thruster_Config.dT1 = constants(3);
-Thruster_Config.dT2 = constants(4);
-Thruster_Config.cQ1 = constants(5);
-Thruster_Config.cQ2 = constants(6);
-Thruster_Config.dQ1 = constants(7);
-Thruster_Config.dQ2 = constants(8);
-Thruster_Config.alpha2 = abs(x(3));
-Thruster_Config.beta2 = abs(x(4));
-Thruster_Config.RH_prop = (constants(5)<0); %1 for RH, 0 for LH
+% Save results:
+Thruster_Config.kv1 = kv1;
+Thruster_Config.kv2 = kv2;
+Thruster_Config.dv1 = dv1;
+Thruster_Config.dv2 = dv2;
+Thruster_Config.cTn = cTn;
+Thruster_Config.cQn = cQn;
+Thruster_Config.kn = kn;
+Thruster_Config.kq = kq;
 
-%Run Simulation
-[t_fit, T_fit, Q_fit, n_fit, u_fit] = sim_thruster(Va, Throttle , rho, Thruster_Config, dt);
+kq = ((59.44/110.1)*kv2*(3-dv2)-kv2*(2-dv2))/(59.44*110-59.44^2);
+kn = (kv2*(3-dv2)-kq*110.1^2)/110.1;
 
-%Plot results
-figure;
-subplot(3,1,1);
-plot(t_Data, T_Data, t_fit, T_fit, '--k');
-ylabel('Thrust [N]');
-axis([0 2 0 110]);
-grid on;
+% Simulate model:
+n_fitp3 = zeros(length(tp3),1);
+n_fitp2 = zeros(length(tp2),1);
+n_fitm2 = zeros(length(tm2),1);
+n_fitm3 = zeros(length(tm3),1);
+for i = 2:length(n_fitp3)
+    d_n = -kn*n_fitp3(i-1)-kq*cQn*n_fitp3(i-1)*abs(n_fitp3(i-1))+kv2*(up3(i-1)-dv2);
+    n_fitp3(i) = n_fitp3(i-1)+d_n*dt;
+end
+T_fitp3 = cTn*n_fitp3.*abs(n_fitp3);
+Q_fitp3 = cQn*n_fitp3.*abs(n_fitp3);
+for i = 2:length(n_fitp2)
+    d_n = -kn*n_fitp2(i-1)-kq*cQn*n_fitp2(i-1)*abs(n_fitp2(i-1))+kv2*(up2(i-1)-dv2);
+    n_fitp2(i) = n_fitp2(i-1)+d_n*dt;
+end
+T_fitp2 = cTn*n_fitp2.*abs(n_fitp2);
+Q_fitp2 = cQn*n_fitp2.*abs(n_fitp2);
+for i = 2:length(n_fitm2)
+    d_n = -kn*n_fitm2(i-1)-kq*cQn*n_fitm2(i-1)*abs(n_fitm2(i-1))+kv1*(um2(i-1)-dv1);
+    n_fitm2(i) = n_fitm2(i-1)+d_n*dt;
+end
+T_fitm2 = cTn*n_fitm2.*abs(n_fitm2);
+Q_fitm2 = cQn*n_fitm2.*abs(n_fitm2);
+for i = 2:length(n_fitm3)
+    d_n = -kn*n_fitm3(i-1)-kq*cQn*n_fitm3(i-1)*abs(n_fitm3(i-1))+kv1*(um3(i-1)-dv1);
+    n_fitm3(i) = n_fitm3(i-1)+d_n*dt;
+end
+T_fitm3 = cTn*n_fitm3.*abs(n_fitm3);
+Q_fitm3 = cQn*n_fitm3.*abs(n_fitm3);
 
-subplot(3,1,2);
-plot(t_Data, -Q_Data, t_fit, -Q_fit, '--k');
-ylabel('Torque [Nm]');
-axis([0 2 -2 3]);
-grid on;
+% Generate plots
+figure
+subplot(4,1,1)
+plot(tp3,np3,tp3,n_fitp3,'--k')
+grid
+subplot(4,1,2)
+plot(tp2,np2,tp2,n_fitp2,'--k')
+legend('Data','Model')
+ylabel('Rotor Speed, n, [rad/s]')
+grid
+subplot(4,1,3)
+plot(tm2,nm2,tm2,n_fitm2,'--k')
+grid
+subplot(4,1,4)
+plot(tm3,nm3,tm3,n_fitm3,'--k')
+xlabel('Time, t, [sec]')
+grid
 
-subplot(3,1,3);
-plot(t_Data, n_Data, t_fit, n_fit, '--k');
-xlabel('Time [s]'); ylabel('Propeller Speed [rpm]');
-legend('Experimental', 'Model', 'Location','Southeast');
-axis([0 2 0 2500]);
-grid on;
+figure
+subplot(4,1,1)
+plot(tp3,Tp3,tp3,T_fitp3,'--k')
+grid
+subplot(4,1,2)
+plot(tp2,Tp2,tp2,T_fitp2,'--k')
+legend('Data','Model')
+ylabel('Thrust, T, [N]')
+grid
+subplot(4,1,3)
+plot(tm2,Tm2,tm2,T_fitm2,'--k')
+grid
+subplot(4,1,4)
+plot(tm3,Tm3,tm3,T_fitm3,'--k')
+xlabel('Time, t, [sec]')
+grid
 
-figure;
-plot(t_fit,u_fit,'--k')
-xlabel('Time [s]'); ylabel('Flow Speed [m/s]');
-grid on;
+figure
+subplot(4,1,1)
+plot(tp3,Qp3,tp3,Q_fitp3,'--k')
+grid
+subplot(4,1,2)
+plot(tp2,Qp2,tp2,Q_fitp2,'--k')
+legend('Data','Model')
+ylabel('Torque, Q, [N*m]')
+grid
+subplot(4,1,3)
+plot(tm2,Qm2,tm2,Q_fitm2,'--k')
+grid
+subplot(4,1,4)
+plot(tm3,Qm3,tm3,Q_fitm3,'--k')
+xlabel('Time, t, [sec]')
+grid

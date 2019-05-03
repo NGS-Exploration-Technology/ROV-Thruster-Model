@@ -1,4 +1,4 @@
-function x = optimize_voltage_constant()
+function [kn,kv1,kv2] = optimize_voltage_constant()
 % Read in rpm data and fit to first order model
 
 %Set fminsearch options
@@ -49,7 +49,7 @@ v = {vp5,vp3,vm3,vm5};
 % grid
 
 % fminsearch operation:
-f = @(x)fitness_fcn_rpm_voltage(x,t,n,v,dt);
+f = @(x)fitness_fcn_rpm_voltage(x,t,n,v,dt,dv1,dv2);
 
 [x,fval,exitflag,opt_output] = fminsearch(f,[10 700 700], options)
 
