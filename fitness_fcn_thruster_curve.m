@@ -1,5 +1,5 @@
 function loss = fitness_fcn_thruster_curve(x,t,n,u,dt,cQn,kv1,kv2,dv1,dv2)
-% Fitness function for 1st order rpm model in air
+% Fitness function for 1st order rpm model in water
 
 % Preallocate constants:
 kn = x(1);
