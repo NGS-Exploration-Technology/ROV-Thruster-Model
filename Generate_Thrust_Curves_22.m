@@ -1,4 +1,4 @@
-function [cTn,cTnv,cQn,cQnv] = Generate_Thrust_Curves_22()
+function [cTn,cTnv,cTv,cQn,cQnv,cQv] = Generate_Thrust_Curves_22()
 
 %Set fminsearch options
 options.Display= 'final';

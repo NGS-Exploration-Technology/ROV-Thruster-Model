@@ -74,6 +74,7 @@ dtv = tvm3(2)-tvm3(1);
 % plot(time_vm3,vm3)
 % grid
 
+% Correct for overfitting:
 cTn = .55*cTn;
 cTnv = .3*cTnv;
 
@@ -87,7 +88,7 @@ constants = {kv1,kv2,dv1,dv2,kV,kVV,kTV,cTn,cTnv,cQn,cQnv,dt,dtv};
 %define Fitness Function
 f = @(x)fitness_fcn_thruster_curve_2(x,t,tv,n,v,u,constants);
 
-[x fval exitflag opt_output] = fminsearch(f,[kn .0038 kV 10 kTV], options)
+[x fval exitflag opt_output] = fminsearch(f,[kn 1000 kV 10 kTV], options)
 
 kn = x(1);
 kq = x(2);
