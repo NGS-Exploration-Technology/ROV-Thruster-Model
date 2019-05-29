@@ -1,118 +1,122 @@
-clear all;
+clear; close all;
+
 % Initialization of physical model constants
 thruster_config;
-rho = 1027;
-Diam = Thruster_Config.D;
-L = Thruster_Config.L;
-kn = Thruster_Config.kn1;
-kq = Thruster_Config.kq*2*pi/60;
-kv1 = 7578*2*pi/60;
-kv2 = 6770*2*pi/60;
-dv1 = -.8475;
-dv2 = .9254;
-udotmax = 1/.01;
-cT1 = Thruster_Config.cT1/((2*pi/60)^2);
-cQ1 = Thruster_Config.cQ1/((2*pi/60)^2);
+kn = Thruster_Config.kn;
+kq = Thruster_Config.kq;
+kv1 = Thruster_Config.kv1;
+% kv2 = 670;
+kv2 = Thruster_Config.kv2;
+dv1 = Thruster_Config.dv1;
+dv2 = Thruster_Config.dv2;
+cTn = Thruster_Config.cTn;
+cQn = Thruster_Config.cQn;
 
 % Initialization of controller parameters
-Kn = 10;
-cntrl_dt = .05; % Sampling frequency
-rate = robotics.Rate(1/cntrl_dt);
-t = 0:cntrl_dt:4;
-Td = 10*ones(size(t)); %*sin(0.5*t.');
+Kp = 5;
+Ki = 10;
+dt = .04; % Sampling frequency
+rate = robotics.Rate(1/dt);
+t = 0:dt:10;
+Td = [(linspace(0,10,50)).';10*ones(((length(t)-1)/2)-100,1);(linspace(10,-10,100)).';-10*ones(((length(t)+1)/2)-100,1);(linspace(-10,0,50)).'];
+% Td = [(linspace(0,10,50)).';(linspace(10,-10,100)).';(linspace(-10,0,50)).';zeros(51,1)];
+% Td = 10*sin(1.88*t.');
 nd = zeros(length(t),1);
-nhat = zeros(length(t),1);
-u = 0;
+nhat = zeros(length(t)+1,1);
+u = zeros(length(t),1);
 uprev = 0;
-y_volts = zeros(length(t),1);
+udotmax = 1/.01;
+y = zeros(length(t),1);
+c = 0;
 
-%%%%% NEW COVARIANCES FOR KALMAN FILTER %%%%%
-Q = 1;
-R = 2;
-P = R;
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Covariances for KF:
+Q = 100;
+R = 3;
+P = [R;zeros(length(t),1)];
 
 % Initialize Arduino Communication
-% UPDATE WITH CURRENT ARDUINO COM PORT
-%ard = serial('COM4', 'BaudRate', 9600, 'DataBits', 8);
-TACH = 'A0';
-FLOW = 'A1';
-OUT = 'D5';
-ard = arduino('COM4','uno');
-configurePin(ard,OUT,'PWM');
-configurePin(ard,TACH,'AnalogInput');
-configurePin(ard,FLOW,'AnalogInput');
-configurePin(ard,'D6','DigitalOutput');
-configurePin(ard,'D7','DigitalOutput');
-
-
-%Set initial voltage to 0V
-writePWMVoltage(ard,OUT,2.5);
-
-% Enable output from Arduino
-writeDigitalPin(ard,'D6',0);
-writeDigitalPin(ard,'D7',1);
-
 fprintf(1, 'Entering Control Loop!\n');
+s = serial('COM8', 'BaudRate', 9600);
+fopen(s);
 keyboard
 reset(rate);
-
 tic
+
+% Enter loop
 for i = 1:length(Td)
-    % read tachometer and flow speed
-    y_volts(i) = readVoltage(ard,TACH);
-    y = (477.43*(2*y_volts(i)-5)+5.3255)*2*pi/60;
-    % flow = readVoltage(ard,FLOW);
-
-    % Estimate update
-    K = P/(P+R);
-    nhat(i) = nhat(i)+K*(sign(nhat(i))*abs(y)-nhat(i));
-    P = (1-K)*P;
-
+    
     % Control update
-    nd(i) = sqrt(abs(Td(i)/(rho*Diam^4*cT1)))*sign(Td(i));
-    ndot_d = (nd(i)-nhat(i))/cntrl_dt;
-    a = ndot_d+kn*nd(i)-kq*rho*Diam^5*cQ1*nd(i)*abs(nd(i));
-    b = Kn*(nhat(i)-nd(i));
+    nd(i) = sqrt(abs(Td(i)/cTn))*sign(Td(i));
+    ndot_d = (nd(i)-nhat(i))/dt;
+    cdot = nhat(i) - nd(i);
+    c = c + cdot*dt;
+    a = ndot_d+kn*nd(i)+kq*cQn*nd(i)*abs(nd(i));
+    b = Kp*(nhat(i)-nd(i))+Ki*c;
     if a < b
-        u = ((a-b)/kv1)+dv1;
+        u(i) = ((a-b)/kv1)+dv1;
     elseif a > b
-        u = ((a-b)/kv2)+dv2;
+        u(i) = ((a-b)/kv2)+dv2;
     end
-    if (abs(u-uprev)/cntrl_dt)>udotmax
-        u = uprev+sign(u-uprev)*udotmax*cntrl_dt;  
+    if (abs(u(i)-uprev)/dt)>udotmax
+        u(i) = uprev+sign(u(i)-uprev)*udotmax*dt;  
     end
-    if abs(u) > 3
-        u = 3*sign(u);
+    if abs(u(i)) > 5
+        u(i) = 5*sign(u(i));
     end
-    if u <= dv1
-        gamma = kv1 * (u - dv1);
-    elseif u >= dv2
-        gamma = kv2 * (u - dv2);
+    if u(i) <= dv1
+        gamma = kv1*(u(i)-dv1);
+    elseif u(i) >= dv2
+        gamma = kv2*(u(i)-dv2);
     else
         gamma = 0;
     end
-    uprev = u;
-
-    % u -> volts -> state_value (0-255)
-    %    -> shift u into 0-10V range
-    v_out = (-u + 5.0) / 2.0;
-    writePWMVoltage(ard,OUT,v_out);
-
+    uprev = u(i);
+    
+    % read tachometer and flow speed
+    reading = fscanf(s, '%d,%d');
+    y_raw = reading(1);
+    % flow_raw = reading(2);
+    y_volts = y_raw * 5 / 1024;
+    % flow_volts = flow_raw * 5 / 1024;
+    y(i) = 49.9723*y_volts;
+    
     % Observer prediction
-    nhatdot = -kn*nhat(i)+kq*rho*Diam^5*cQ1*nhat(i)*abs(nhat(i))+gamma;
-    nhat(i+1) = nhat(i)+nhatdot*cntrl_dt;
-    A = -kn+2*kq*rho*Diam^5*cQ1*abs(nhat(i));
-    Pdot = 2*A*P+Q;
-    P = P+Pdot*cntrl_dt;
+    K = P(i)/R;
+    nhatdot = -kn*nhat(i)-kq*cQn*nhat(i)*abs(nhat(i))+gamma+K*(sign(nhat(i))*abs(y(i))-nhat(i));
+    nhat(i+1) = nhat(i)+nhatdot*dt;
+    A = -kn-2*kq*cQn*abs(nhat(i));
+    Pdot = 2*A*P(i)-K*P(i)+Q;
+    P(i+1) = P(i)+Pdot*dt;
 
+    % u -> volts -> state_value (0-255) -> shift u into 0-10V range
+    v_out = (-u(i) + 5.0);
+    v_out = v_out * 255 / 10;
+    fprintf(s, '%d\n', round(v_out));
+    %fprintf(s, '255\n');
+    
     % Wait for next loop
     waitfor(rate);
-
 end
-toc
-writePWMVoltage(ard,OUT,2.5);
-statistics(rate)
 
-writeDigitalPin(ard,'D6',0);
-writeDigitalPin(ard,'D7',0);
+toc
+statistics(rate)
+reading = fscanf(s, '%d,%d');
+fprintf(s, '-99\n');
+fclose(s);
+
+% Plot results
+figure
+subplot(3,1,1)
+plot(t,y,t,abs(nhat(1:(end-1))),t,abs(nd),'--k')
+ylabel('Propeller Speed [rad/s]')
+legend({'y','$|\hat{n}|$','$|n_{d}|$'},'Interpreter','Latex')
+grid
+subplot(3,1,2)
+plot(t,P(1:(end-1)),'g')
+ylabel('Variance')
+grid
+subplot(3,1,3)
+plot(t,u)
+ylabel('Input [V]')
+xlabel('Time [s]')
+grid
