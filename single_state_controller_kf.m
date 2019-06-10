@@ -5,7 +5,6 @@ thruster_config;
 kn = Thruster_Config.kn;
 kq = Thruster_Config.kq;
 kv1 = Thruster_Config.kv1;
-% kv2 = 670;
 kv2 = Thruster_Config.kv2;
 dv1 = Thruster_Config.dv1;
 dv2 = Thruster_Config.dv2;
@@ -18,9 +17,9 @@ Ki = 10;
 dt = .04; % Sampling frequency
 rate = robotics.Rate(1/dt);
 t = 0:dt:10;
-Td = [(linspace(0,10,50)).';10*ones(((length(t)-1)/2)-100,1);(linspace(10,-10,100)).';-10*ones(((length(t)+1)/2)-100,1);(linspace(-10,0,50)).'];
-% Td = [(linspace(0,10,50)).';(linspace(10,-10,100)).';(linspace(-10,0,50)).';zeros(51,1)];
-% Td = 10*sin(1.88*t.');
+% Td = -[(linspace(0,10,50)).';10*ones(((length(t)-1)/2)-100,1);(linspace(10,-10,100)).';-10*ones(((length(t)+1)/2)-100,1);(linspace(-10,0,50)).'];
+Td = [-10*ones((length(t)-1)/2,1);10*ones((length(t)+1)/2,1)];
+% Td = 5*cos(1.88*t.')-5;
 nd = zeros(length(t),1);
 nhat = zeros(length(t)+1,1);
 u = zeros(length(t),1);
@@ -30,9 +29,9 @@ y = zeros(length(t),1);
 c = 0;
 
 % Covariances for KF:
-Q = 100;
-R = 3;
-P = [R;zeros(length(t),1)];
+QQ = 300;
+RR = 3;
+P = [RR;zeros(length(t),1)];
 
 % Initialize Arduino Communication
 fprintf(1, 'Entering Control Loop!\n');
@@ -60,8 +59,8 @@ for i = 1:length(Td)
     if (abs(u(i)-uprev)/dt)>udotmax
         u(i) = uprev+sign(u(i)-uprev)*udotmax*dt;  
     end
-    if abs(u(i)) > 5
-        u(i) = 5*sign(u(i));
+    if abs(u(i)) > 3
+        u(i) = 3*sign(u(i));
     end
     if u(i) <= dv1
         gamma = kv1*(u(i)-dv1);
@@ -72,27 +71,21 @@ for i = 1:length(Td)
     end
     uprev = u(i);
     
+    % u -> volts -> state_value (0-255) -> shift u into 0-10V range
+    v_out = (-u(i)+5)*255/10;
+    fprintf(s, '%d\n', round(v_out));
+    
     % read tachometer and flow speed
     reading = fscanf(s, '%d,%d');
-    y_raw = reading(1);
-    % flow_raw = reading(2);
-    y_volts = y_raw * 5 / 1024;
-    % flow_volts = flow_raw * 5 / 1024;
-    y(i) = 49.9723*y_volts;
+    y(i) = 49.9723*reading(1)*5/1024;
     
     % Observer prediction
-    K = P(i)/R;
+    K = P(i)/RR;
     nhatdot = -kn*nhat(i)-kq*cQn*nhat(i)*abs(nhat(i))+gamma+K*(sign(nhat(i))*abs(y(i))-nhat(i));
     nhat(i+1) = nhat(i)+nhatdot*dt;
     A = -kn-2*kq*cQn*abs(nhat(i));
-    Pdot = 2*A*P(i)-K*P(i)+Q;
+    Pdot = 2*A*P(i)-K*P(i)+QQ;
     P(i+1) = P(i)+Pdot*dt;
-
-    % u -> volts -> state_value (0-255) -> shift u into 0-10V range
-    v_out = (-u(i) + 5.0);
-    v_out = v_out * 255 / 10;
-    fprintf(s, '%d\n', round(v_out));
-    %fprintf(s, '255\n');
     
     % Wait for next loop
     waitfor(rate);
@@ -100,8 +93,8 @@ end
 
 toc
 statistics(rate)
-reading = fscanf(s, '%d,%d');
 fprintf(s, '-99\n');
+reading = fscanf(s, '%d,%d');
 fclose(s);
 
 % Plot results

@@ -1,4 +1,4 @@
-clear
+clear; close all;
 
 % Initialization of physical model constants
 thruster_config_2;
@@ -25,9 +25,9 @@ Ki = 10;
 dt = .04; % Sampling frequency
 rate = robotics.Rate(1/dt);
 t = 0:dt:10;
-Td = [(linspace(0,10,50)).';10*ones(((length(t)-1)/2)-100,1);(linspace(10,-10,100)).';-10*ones(((length(t)+1)/2)-100,1);(linspace(-10,0,50)).'];
-% Td = [(linspace(0,10,50)).';(linspace(10,-10,100)).';(linspace(-10,0,50)).';zeros(51,1)];
-% Td = 10*sin(1.88*t.');
+Td = -[(linspace(0,10,50)).';10*ones(((length(t)-1)/2)-100,1);(linspace(10,-10,100)).';-10*ones(((length(t)+1)/2)-100,1);(linspace(-10,0,50)).'];
+% Td = [-10*ones((length(t)-1)/2,1);10*ones((length(t)+1)/2,1)];
+% Td = 5*cos(1.88*t.')-5;
 nd = zeros(length(t),1);
 nhat = zeros(length(t)+1,1);
 vhat = nhat;
@@ -39,13 +39,13 @@ y = zeros(2,length(t));
 c = 0;
 
 % Covariances for KF:
-Q = 2;
+Q = 300;
 R = 3;
 P = [R;zeros(length(t),1)];
 
 % Initialize Arduino Communication
 fprintf(1, 'Entering Control Loop!\n');
-s = serial('COM7', 'BaudRate', 9600);
+s = serial('COM8', 'BaudRate', 9600);
 fopen(s);
 keyboard
 reset(rate);
@@ -81,13 +81,13 @@ for i = 1:length(Td)
     end
     uprev = u(i);
     
+    % u -> volts -> state_value (0-255) -> shift u into 0-10V range
+    v_out = (-u(i)+5)*255/10;
+    fprintf(s, '%d\n', round(v_out));
+    
     % read tachometer and flow speed
     reading = fscanf(s, '%d,%d');
-    reading = reading*5/1024;
-    y_volts = reading(1);
-    flow_volts = reading(2);
-    y(1,i) = 49.9723*(2*y_volts-5);
-    y(2,i) = -(flow_volts-2.5)*.3/2.5;
+    y(:,i) = diag([49.9723 .3/2.5])*reading*5/1024-[0;.3];
     
     % Observer prediction
     T = cTn*nhat(i)*abs(nhat(i))-cTnv*vhat(i)*abs(nhat(i));
@@ -102,11 +102,6 @@ for i = 1:length(Td)
     A = -kn-2*kq*cQn*abs(nhat(i))+kq*cQnv*vhat(i)*sign(nhat(i));
     Pdot = 2*A*P(i)-K*P(i)+Q;
     P(i+1) = P(i)+Pdot*dt;
-
-    % u -> volts -> state_value (0-255) -> shift u into 0-10V range
-    v_out = (-u(i) + 5.0);
-    v_out = v_out * 255 / 10;
-    fprintf(s, '%d\n', round(v_out));
     
     % Wait for next loop
     waitfor(rate);
@@ -114,8 +109,8 @@ end
 
 toc
 statistics(rate)
-reading = fscanf(s, '%d,%d');
 fprintf(s, '-99\n');
+reading = fscanf(s, '%d,%d');
 fclose(s);
 
 % Plot results
