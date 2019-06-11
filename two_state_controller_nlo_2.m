@@ -4,10 +4,10 @@ clear; close all;
 thruster_config_2;
 kn = Thruster_Config.kn;
 kq = Thruster_Config.kq;
-kv1 = Thruster_Config.kv1;
-kv2 = Thruster_Config.kv2;
-dv1 = Thruster_Config.dv1;
-dv2 = Thruster_Config.dv2;
+kv1 = Thruster_Config.kv1*1.05;
+kv2 = Thruster_Config.kv2*.98;
+dv1 = Thruster_Config.dv1*.84/.83;
+dv2 = Thruster_Config.dv2*.84/.86;
 kv = Thruster_Config.kv;
 kvv = Thruster_Config.kvv;
 kt = Thruster_Config.kt;
@@ -71,8 +71,8 @@ for i = 1:length(Td)
     if (abs(u(i)-uprev)/dt)>udotmax
         u(i) = uprev+sign(u(i)-uprev)*udotmax*dt;  
     end
-    if abs(u(i)) > 5
-        u(i) = 5*sign(u(i));
+    if abs(u(i)) > 3
+        u(i) = 3*sign(u(i));
     end
     if u(i) <= dv1
         gamma = kv1*(u(i)-dv1);
@@ -89,7 +89,7 @@ for i = 1:length(Td)
     
     % read tachometer and flow speed
     reading = fscanf(s, '%d,%d');
-    y(:,i) = diag([49.9723 .3/2.5])*reading*5/1024-[0;.3];
+    y(:,i) = diag([49.9723 -.3/2.5])*reading*5/1024+[0;.3];
     
     % Observer prediction
     T = cTn*nhat(i)*abs(nhat(i))-cTnv*vhat(i)*abs(nhat(i))-cTv*vhat(i)*abs(vhat(i));
@@ -118,7 +118,7 @@ fclose(s);
 % Plot results
 figure
 subplot(3,1,1)
-plot(t,y(1,:),t,nhat(1:(end-1)),t,nd,'--k')
+plot(t,y(1,:),t,abs(nhat(1:(end-1))),t,abs(nd),'--k')
 ylabel('Propeller Velocity [rad/s]')
 legend({'y','$\hat{n}$','$n_{d}$'},'Interpreter','Latex')
 grid

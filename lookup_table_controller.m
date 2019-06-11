@@ -2,12 +2,6 @@ clear; close all;
 
 % Initialization of physical model constants
 thruster_config;
-kn = Thruster_Config.kn;
-kq = Thruster_Config.kq;
-kv1 = Thruster_Config.kv1;
-kv2 = Thruster_Config.kv2;
-dv1 = Thruster_Config.dv1;
-dv2 = Thruster_Config.dv2;
 cTn = Thruster_Config.cTn;
 cQn = Thruster_Config.cQn;
 
@@ -16,8 +10,8 @@ dt = .04; % Sampling frequency
 rate = robotics.Rate(1/dt);
 t = 0:dt:10;
 % Td = -[(linspace(0,10,50)).';10*ones(((length(t)-1)/2)-100,1);(linspace(10,-10,100)).';-10*ones(((length(t)+1)/2)-100,1);(linspace(-10,0,50)).'];
-Td = [-10*ones((length(t)-1)/2,1);10*ones((length(t)+1)/2,1)];
-% Td = 5*cos(1.88*t.')-5;
+% Td = [-10*ones((length(t)-1)/2,1);10*ones((length(t)+1)/2,1)];
+Td = 5*cos(1.88*t.')-5;
 nd = zeros(length(t),1);
 u = zeros(length(t),1);
 uprev = 0;
