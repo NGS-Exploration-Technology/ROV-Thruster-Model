@@ -27,9 +27,9 @@ Ki = 10;
 dt = .04; % Sampling frequency
 rate = robotics.Rate(1/dt);
 t = 0:dt:10;
-Td = -[(linspace(0,10,50)).';10*ones(((length(t)-1)/2)-100,1);(linspace(10,-10,100)).';-10*ones(((length(t)+1)/2)-100,1);(linspace(-10,0,50)).'];
+% Td = -[(linspace(0,10,50)).';10*ones(((length(t)-1)/2)-100,1);(linspace(10,-10,100)).';-10*ones(((length(t)+1)/2)-100,1);(linspace(-10,0,50)).'];
 % Td = [-10*ones((length(t)-1)/2,1);10*ones((length(t)+1)/2,1)];
-% Td = 5*cos(1.88*t.')-5;
+Td = 5*cos(1.88*t.')-5;
 nd = zeros(length(t),1);
 nhat = zeros(length(t)+1,1);
 vhat = nhat;
@@ -127,7 +127,7 @@ ylabel('Propeller Velocity [rad/s]')
 legend({'y','$\hat{n}$','$n_{d}$'},'Interpreter','Latex')
 grid
 subplot(3,1,2)
-plot(t,P(1,1,1:(end-1)),'g')
+plot(t,squeeze(P(1,1,1:(end-1))),'g')
 ylabel('Variance')
 grid
 subplot(3,1,3)

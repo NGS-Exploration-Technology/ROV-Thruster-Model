@@ -25,9 +25,9 @@ Ki = 10;
 dt = .04; % Sampling frequency
 rate = robotics.Rate(1/dt);
 t = 0:dt:10;
-Td = -[(linspace(0,10,50)).';10*ones(((length(t)-1)/2)-100,1);(linspace(10,-10,100)).';-10*ones(((length(t)+1)/2)-100,1);(linspace(-10,0,50)).'];
+% Td = -[(linspace(0,10,50)).';10*ones(((length(t)-1)/2)-100,1);(linspace(10,-10,100)).';-10*ones(((length(t)+1)/2)-100,1);(linspace(-10,0,50)).'];
 % Td = [-10*ones((length(t)-1)/2,1);10*ones((length(t)+1)/2,1)];
-% Td = 5*cos(1.88*t.')-5;
+Td = 5*cos(1.88*t.')-5;
 nd = zeros(length(t),1);
 nhat = zeros(length(t)+1,1);
 vhat = nhat;
@@ -39,9 +39,9 @@ y = zeros(2,length(t));
 c = 0;
 
 % Covariances for KF:
-Q = 300;
-R = 3;
-P = [R;zeros(length(t),1)];
+QQ = 300;
+RR = 3;
+P = [RR;zeros(length(t),1)];
 
 % Initialize Arduino Communication
 fprintf(1, 'Entering Control Loop!\n');
@@ -92,7 +92,7 @@ for i = 1:length(Td)
     % Observer prediction
     T = cTn*nhat(i)*abs(nhat(i))-cTnv*vhat(i)*abs(nhat(i));
     Q = cQn*nhat(i)*abs(nhat(i))-cQnv*vhat(i)*abs(nhat(i));
-    K = P(i)/R;
+    K = P(i)/RR;
     nhatdot = -kn*nhat(i)-kq*Q+gamma+K*(sign(nhat(i))*abs(y(1,i))-nhat(i));
     vhatdot = -kv*vhat(i)-kvv*abs(vhat(i))*(vhat(i)-vahat(i))+kt*T+(.1+kV+.1*abs(nhat(i)))*(y(2,i)-vahat(i));
     vahatdot = -kV*vahat(i)-kVV*vahat(i)*abs(vahat(i))+kTV*T+(.6+.1*abs(nhat(i)))*(y(2,i)-vahat(i));
@@ -100,7 +100,7 @@ for i = 1:length(Td)
     vhat(i+1) = vhat(i)+vhatdot*dt;
     vahat(i+1) = vahat(i)+vahatdot*dt;
     A = -kn-2*kq*cQn*abs(nhat(i))+kq*cQnv*vhat(i)*sign(nhat(i));
-    Pdot = 2*A*P(i)-K*P(i)+Q;
+    Pdot = 2*A*P(i)-K*P(i)+QQ;
     P(i+1) = P(i)+Pdot*dt;
     
     % Wait for next loop
