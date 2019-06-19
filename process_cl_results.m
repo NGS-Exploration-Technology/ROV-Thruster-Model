@@ -6,28 +6,28 @@ clear; close all;
 % Preallocate indexing parameters
 lenstepL = 560:10560;
 lensineL = 550:10550;
-lenrampL = 1:10001;
+lenrampL = 560:10560;
 lenstep1 = 400:10400;
 lensine1 = 500:10500;
-lenramp1 = 1:10001;
+lenramp1 = 610:10610;
 lenstep2kf1 = 270:10270;
 lensine2kf1 = 430:10430;
-lenramp2kf1 = 1:10001;
+lenramp2kf1 = 450:10450;
 lenstep2nlo1 = 380:10380;
-lensine2nlo1 = 1:10001;
-lenramp2nlo1 = 1:10001;
+lensine2nlo1 = 660:10660;
+lenramp2nlo1 = 300:10300;
 lenstep2kfnlo1 = 390:10390;
-lensine2kfnlo1 = 1:10001;
-lenramp2kfnlo1 = 1:10001;
+lensine2kfnlo1 = 430:10430;
+lenramp2kfnlo1 = 600:10600;
 lenstep2kf2 = 550:10550;
-lensine2kf2 = 1:10001;
-lenramp2kf2 = 1:10001;
+lensine2kf2 = 420:10420;
+lenramp2kf2 = 340:10340;
 lenstep2nlo2 = 600:10600;
-lensine2nlo2 = 1:10001;
-lenramp2nlo2 = 1:10001;
+lensine2nlo2 = 500:10500;
+lenramp2nlo2 = 520:10520;
 lenstep2kfnlo2 = 390:10390;
-lensine2kfnlo2 = 1:10001;
-lenramp2kfnlo2 = 1:10001;
+lensine2kfnlo2 = 470:10470;
+lenramp2kfnlo2 = 300:10300;
 t_cntr = 0:.04:10;
 t_data = 0:.001:10;
 Tdstep = [-10*ones((length(t_data)-1)/2,1);10*ones((length(t_data)+1)/2,1)];
@@ -125,7 +125,7 @@ rmse2KFNLO1 = sqrt(mean((T2KFNLO1step-Tdstep).^2));
 rmse2KF2 = sqrt(mean((T2KF2step-Tdstep).^2));
 rmse2NLO2 = sqrt(mean((T2NLO2step-Tdstep).^2));
 rmse2KFNLO2 = sqrt(mean((T2KFNLO2step-Tdstep).^2));
-steptbl = [rmse1 rmse2KF1 rmse2KF2;rmseL rmse2NLO1 rmse2NLO2;0 rmse2KFNLO1 rmse2KFNLO2];
+steptbl = [rmse1 rmse2KF1 rmse2KF2;rmseL rmse2NLO1 rmse2NLO2;NaN rmse2KFNLO1 rmse2KFNLO2];
 
 %% Step 2b: Plot Step Response Data
 
@@ -206,7 +206,6 @@ subplot(3,3,3)
 plot(t_cntr,sign(nhat2KF2step).*(y2KF2step(1,:).'),t_cntr,nhat2KF2step,t_cntr,nd2KF2step,'--k',t_cntr,nhat2KF2step+3*sqrt(squeeze(P2KF2step(1,1,:))),'--g',t_cntr,nhat2KF2step-3*sqrt(squeeze(P2KF2step(1,1,:))),'--g')
 ylim([-120 120])
 title('Hydrodynamic Quadratic Model Angular Velocity Results')
-legend({'Measurement','Estimate','Setpoint','3\sigma Bounds'},'Location','Southeast')
 grid
 subplot(3,3,6)
 plot(t_cntr,sign(nhat2NLO2step).*(y2NLO2step(1,:).'),t_cntr,nhat2NLO2step,t_cntr,nd2NLO2step,'--k',t_cntr,nhat2NLO2step+3*sqrt(P2NLO2step),'--g',t_cntr,nhat2NLO2step-3*sqrt(P2NLO2step),'--g')
@@ -216,22 +215,90 @@ subplot(3,3,9)
 plot(t_cntr,sign(nhat2KFNLO2step).*(y2KFNLO2step(1,:).'),t_cntr,nhat2KFNLO2step,t_cntr,nd2KFNLO2step,'--k',t_cntr,nhat2KFNLO2step+3*sqrt(squeeze(P2KFNLO2step(1,1,:))),'--g',t_cntr,nhat2KFNLO2step-3*sqrt(squeeze(P2KFNLO2step(1,1,:))),'--g')
 ylim([-120 120])
 xlabel('Time [s]')
+legend({'Measurement','Estimate','Setpoint','3\sigma Bounds'},'Location','Southeast')
 grid
 suptitle('Angular Velocity Step Response Results')
 
 % Plot fluid velocity results
 figure
-subplot(2,2,1)
-plot(t_cntr,vhat2KF1step,t_cntr,vhat2KF1step+3*sqrt(squeeze(P2KF1step(2,2,:))),'--g',t_cntr,vhat2KF1step-3*sqrt(squeeze(P2KF1step(2,2,:))),'--g')
-ylabel('Step Axial Velocity [rad/s]')
-title('Lookup Table Angular Velocity Results')
+subplot(3,4,1)
+hold on
+plot(t_cntr,vhat2KF1step,'Color',[0.8500 0.3250 0.0980])
+plot(t_cntr,vhat2KF1step+3*sqrt(squeeze(P2KF1step(2,2,:))),'--g',t_cntr,vhat2KF1step-3*sqrt(squeeze(P2KF1step(2,2,:))),'--g')
+ylim([-.3 .3])
+ylabel('EKF Velocity [m/s]')
+title('Hydrodynamic Linear Model Axial Velocity Results')
 grid
-subplot(2,1,2)
-plot(t_cntr,y2KF1step(1,:),t_cntr,sign(ndLsine).*yLsine,t_cntr,ndLsine,'--k')
-xlabel('Time [s]'),ylabel('Sinusoidal Angular Velocity [rad/s]')
+hold off
+subplot(3,4,2)
+plot(t_cntr,y2KF1step(2,:),t_cntr,vahat2KF1step,t_cntr,vahat2KF1step+3*sqrt(squeeze(P2KF1step(3,3,:))),'--g',t_cntr,vahat2KF1step-3*sqrt(squeeze(P2KF1step(3,3,:))),'--g')
+ylim([-.3 .3])
+title('Hydrodynamic Linear Model Ambient Velocity Results')
 grid
+subplot(3,4,3)
+hold on
+plot(t_cntr,vhat2KF2step,'Color',[0.8500 0.3250 0.0980])
+plot(t_cntr,vhat2KF2step+3*sqrt(squeeze(P2KF2step(2,2,:))),'--g',t_cntr,vhat2KF2step-3*sqrt(squeeze(P2KF2step(2,2,:))),'--g')
+ylim([-.3 .3])
+title('Hydrodynamic Quadratic Model Axial Velocity Results')
+grid
+hold off
+subplot(3,4,4)
+plot(t_cntr,y2KF2step(2,:),t_cntr,vahat2KF2step,t_cntr,vahat2KF2step+3*sqrt(squeeze(P2KF2step(3,3,:))),'--g',t_cntr,vahat2KF2step-3*sqrt(squeeze(P2KF2step(3,3,:))),'--g')
+ylim([-.3 .3])
+title('Hydrodynamic Quadratic Model Ambient Velocity Results')
+grid
+subplot(3,4,5)
+plot(t_cntr,vhat2NLO1step,'Color',[0.8500 0.3250 0.0980])
+ylim([-.3 .3])
+ylabel('NLO Velocity [m/s]')
+grid
+subplot(3,4,6)
+plot(t_cntr,y2NLO1step(2,:),t_cntr,vahat2NLO1step)
+ylim([-.3 .3])
+grid
+subplot(3,4,7)
+plot(t_cntr,vhat2NLO2step,'Color',[0.8500 0.3250 0.0980])
+ylim([-.3 .3])
+grid
+subplot(3,4,8)
+plot(t_cntr,y2NLO2step(2,:),t_cntr,vahat2NLO2step)
+ylim([-.3 .3])
+grid
+subplot(3,4,9)
+hold on
+plot(t_cntr,vhat2KFNLO1step,'Color',[0.8500 0.3250 0.0980])
+plot(t_cntr,vhat2KFNLO1step+3*sqrt(squeeze(P2KFNLO1step(2,2,:))),'--g',t_cntr,vhat2KFNLO1step-3*sqrt(squeeze(P2KFNLO1step(2,2,:))),'--g')
+ylim([-.3 .3])
+xlabel('Time [s]'),ylabel('EKFNLO Velocity [m/s]')
+grid
+hold off
+subplot(3,4,10)
+plot(t_cntr,y2KFNLO1step(2,:),t_cntr,vahat2KFNLO1step,t_cntr,vahat2KFNLO1step+3*sqrt(squeeze(P2KFNLO1step(3,3,:))),'--g',t_cntr,vahat2KFNLO1step-3*sqrt(squeeze(P2KFNLO1step(3,3,:))),'--g')
+ylim([-.3 .3])
+xlabel('Time [s]')
+grid
+subplot(3,4,11)
+hold on
+plot(t_cntr,vhat2KFNLO2step,'Color',[0.8500 0.3250 0.0980])
+plot(t_cntr,vhat2KFNLO2step+3*sqrt(squeeze(P2KFNLO2step(2,2,:))),'--g',t_cntr,vhat2KFNLO2step-3*sqrt(squeeze(P2KFNLO2step(2,2,:))),'--g')
+ylim([-.3 .3])
+xlabel('Time [s]')
+grid
+hold off
+subplot(3,4,12)
+plot(t_cntr,y2KFNLO2step(2,:),t_cntr,vahat2KFNLO2step,t_cntr,vahat2KFNLO2step+3*sqrt(squeeze(P2KFNLO2step(3,3,:))),'--g',t_cntr,vahat2KFNLO2step-3*sqrt(squeeze(P2KFNLO2step(3,3,:))),'--g')
+ylim([-.3 .3])
+xlabel('Time [s]')
+legend('Measurement','Estimate','3\sigma Bounds')
+grid
+suptitle('Fluid Velocity Step Response Results')
 
 % Heatmap of errors
+figure
+heatmap({'Single-State','Hydrodynamic Linear','Hydrodynamic Quadratic'},{'EKF','NLO','EKFNLO'},steptbl);
+xlabel('Dynamic Model'),ylabel('Estimator Type')
+title('Thrust Step Response RMS Tracking Errors')
 
 %% Step 3a: Import Sinusoidal Response Data
 
@@ -324,9 +391,180 @@ rmse2KFNLO1 = sqrt(mean((T2KFNLO1sine-Tdsine).^2));
 rmse2KF2 = sqrt(mean((T2KF2sine-Tdsine).^2));
 rmse2NLO2 = sqrt(mean((T2NLO2sine-Tdsine).^2));
 rmse2KFNLO2 = sqrt(mean((T2KFNLO2sine-Tdsine).^2));
-sinetbl = [rmse1 rmse2KF1 rmse2KF2;rmseL rmse2NLO1 rmse2NLO2;0 rmse2KFNLO1 rmse2KFNLO2];
+sinetbl = [rmse1 rmse2KF1 rmse2KF2;rmseL rmse2NLO1 rmse2NLO2;NaN rmse2KFNLO1 rmse2KFNLO2];
 
 %% Step 3b: Plot Sinusoidal Response Data
+
+% Plot thrust results
+figure
+subplot(3,3,1)
+plot(t_data,T1sine,t_data,Tdsine,'--k')
+ylim([-15 0])
+ylabel('EKF Thrust [N]')
+title('Single-State Thrust Results')
+grid
+subplot(3,3,[4 7])
+plot(t_data,TLsine,t_data,Tdsine,'--k')
+ylim([-15 0])
+xlabel('Time [s]'),ylabel('Lookup Table Thrust [N]')
+grid
+subplot(3,3,2)
+plot(t_data,T2KF1sine,t_data,Tdsine,'--k')
+ylim([-15 0])
+title('Hydrodynamic Linear Model Thrust Results')
+grid
+subplot(3,3,5)
+plot(t_data,T2NLO1sine,t_data,Tdsine,'--k')
+ylim([-15 0])
+ylabel('NLO Thrust [N]')
+grid
+subplot(3,3,8)
+plot(t_data,T2KFNLO1sine,t_data,Tdsine,'--k')
+ylim([-15 0])
+xlabel('Time [s]'),ylabel('EKFNLO Thrust [N]')
+grid
+subplot(3,3,3)
+plot(t_data,T2KF2sine,t_data,Tdsine,'--k')
+ylim([-15 0])
+title('Hydrodynamic Quadratic Model Thrust Results')
+grid
+subplot(3,3,6)
+plot(t_data,T2NLO2sine,t_data,Tdsine,'--k')
+ylim([-15 0])
+grid
+subplot(3,3,9)
+plot(t_data,T2KFNLO2sine,t_data,Tdsine,'--k')
+ylim([-15 0])
+xlabel('Time [s]')
+legend({'Experiment','Desired'},'Location','Southeast')
+grid
+suptitle('Thrust Sinusoidal Response Results')
+
+% Plot angular velocity results
+figure
+subplot(3,3,1)
+plot(t_cntr,sign(nhat1sine).*y1sine,t_cntr,nhat1sine,t_cntr,nd1sine,'--k',t_cntr,nhat1sine+3*sqrt(P1sine),'--g',t_cntr,nhat1sine-3*sqrt(P1sine),'--g')
+ylim([-120 0])
+title('Single-State Angular Velocity Results')
+ylabel('EKF Angular Velocity [rad/s]')
+grid
+subplot(3,3,[4 7])
+plot(t_cntr,sign(ndLsine).*yLsine,t_cntr,ndLsine,'--k')
+ylim([-120 0])
+xlabel('Time [s]'),ylabel('Lookup Table Angular Velocity [rad/s]')
+grid
+subplot(3,3,2)
+plot(t_cntr,sign(nhat2KF1sine).*(y2KF1sine(1,:).'),t_cntr,nhat2KF1sine,t_cntr,nd2KF1sine,'--k',t_cntr,nhat2KF1sine+3*sqrt(squeeze(P2KF1sine(1,1,:))),'--g',t_cntr,nhat2KF1sine-3*sqrt(squeeze(P2KF1sine(1,1,:))),'--g')
+ylim([-120 0])
+title('Hydrodynamic Linear Model Angular Velocity Results')
+grid
+subplot(3,3,5)
+plot(t_cntr,sign(nhat2NLO1sine).*(y2NLO1sine(1,:).'),t_cntr,nhat2NLO1sine,t_cntr,nd2NLO1sine,'--k',t_cntr,nhat2NLO1sine+3*sqrt(P2NLO1sine),'--g',t_cntr,nhat2NLO1sine-3*sqrt(P2NLO1sine),'--g')
+ylim([-120 0])
+ylabel('NLO Angular Velocity [rad/s]')
+grid
+subplot(3,3,8)
+plot(t_cntr,sign(nhat2KFNLO1sine).*(y2KFNLO1sine(1,:).'),t_cntr,nhat2KFNLO1sine,t_cntr,nd2KFNLO1sine,'--k',t_cntr,nhat2KFNLO1sine+3*sqrt(squeeze(P2KFNLO1sine(1,1,:))),'--g',t_cntr,nhat2KFNLO1sine-3*sqrt(squeeze(P2KFNLO1sine(1,1,:))),'--g')
+ylim([-120 0])
+xlabel('Time [s]'),ylabel('EKFNLO Angular Velocity [rad/s]')
+grid
+subplot(3,3,3)
+plot(t_cntr,sign(nhat2KF2sine).*(y2KF2sine(1,:).'),t_cntr,nhat2KF2sine,t_cntr,nd2KF2sine,'--k',t_cntr,nhat2KF2sine+3*sqrt(squeeze(P2KF2sine(1,1,:))),'--g',t_cntr,nhat2KF2sine-3*sqrt(squeeze(P2KF2sine(1,1,:))),'--g')
+ylim([-120 0])
+title('Hydrodynamic Quadratic Model Angular Velocity Results')
+grid
+subplot(3,3,6)
+plot(t_cntr,sign(nhat2NLO2sine).*(y2NLO2sine(1,:).'),t_cntr,nhat2NLO2sine,t_cntr,nd2NLO2sine,'--k',t_cntr,nhat2NLO2sine+3*sqrt(P2NLO2sine),'--g',t_cntr,nhat2NLO2sine-3*sqrt(P2NLO2sine),'--g')
+ylim([-120 0])
+grid
+subplot(3,3,9)
+plot(t_cntr,sign(nhat2KFNLO2sine).*(y2KFNLO2sine(1,:).'),t_cntr,nhat2KFNLO2sine,t_cntr,nd2KFNLO2sine,'--k',t_cntr,nhat2KFNLO2sine+3*sqrt(squeeze(P2KFNLO2sine(1,1,:))),'--g',t_cntr,nhat2KFNLO2sine-3*sqrt(squeeze(P2KFNLO2sine(1,1,:))),'--g')
+ylim([-120 0])
+xlabel('Time [s]')
+legend('Measurement','Estimate','Setpoint','3\sigma Bounds')
+grid
+suptitle('Angular Velocity Sinusoidal Response Results')
+
+% Plot fluid velocity results
+figure
+subplot(3,4,1)
+hold on
+plot(t_cntr,vhat2KF1sine,'Color',[0.8500 0.3250 0.0980])
+plot(t_cntr,vhat2KF1sine+3*sqrt(squeeze(P2KF1sine(2,2,:))),'--g',t_cntr,vhat2KF1sine-3*sqrt(squeeze(P2KF1sine(2,2,:))),'--g')
+ylim([-.3 .3])
+ylabel('EKF Velocity [m/s]')
+title('Hydrodynamic Linear Model Axial Velocity Results')
+grid
+hold off
+subplot(3,4,2)
+plot(t_cntr,y2KF1sine(2,:),t_cntr,vahat2KF1sine,t_cntr,vahat2KF1sine+3*sqrt(squeeze(P2KF1sine(3,3,:))),'--g',t_cntr,vahat2KF1sine-3*sqrt(squeeze(P2KF1sine(3,3,:))),'--g')
+ylim([-.3 .3])
+title('Hydrodynamic Linear Model Ambient Velocity Results')
+grid
+subplot(3,4,3)
+hold on
+plot(t_cntr,vhat2KF2sine,'Color',[0.8500 0.3250 0.0980])
+plot(t_cntr,vhat2KF2sine+3*sqrt(squeeze(P2KF2sine(2,2,:))),'--g',t_cntr,vhat2KF2sine-3*sqrt(squeeze(P2KF2sine(2,2,:))),'--g')
+ylim([-.3 .3])
+title('Hydrodynamic Quadratic Model Axial Velocity Results')
+grid
+hold off
+subplot(3,4,4)
+plot(t_cntr,y2KF2sine(2,:),t_cntr,vahat2KF2sine,t_cntr,vahat2KF2sine+3*sqrt(squeeze(P2KF2sine(3,3,:))),'--g',t_cntr,vahat2KF2sine-3*sqrt(squeeze(P2KF2sine(3,3,:))),'--g')
+ylim([-.3 .3])
+title('Hydrodynamic Quadratic Model Ambient Velocity Results')
+grid
+subplot(3,4,5)
+plot(t_cntr,vhat2NLO1sine,'Color',[0.8500 0.3250 0.0980])
+ylim([-.3 .3])
+ylabel('NLO Velocity [m/s]')
+grid
+subplot(3,4,6)
+plot(t_cntr,y2NLO1sine(2,:),t_cntr,vahat2NLO1sine)
+ylim([-.3 .3])
+grid
+subplot(3,4,7)
+plot(t_cntr,vhat2NLO2sine,'Color',[0.8500 0.3250 0.0980])
+ylim([-.3 .3])
+grid
+subplot(3,4,8)
+plot(t_cntr,y2NLO2sine(2,:),t_cntr,vahat2NLO2sine)
+ylim([-.3 .3])
+grid
+subplot(3,4,9)
+hold on
+plot(t_cntr,vhat2KFNLO1sine,'Color',[0.8500 0.3250 0.0980])
+plot(t_cntr,vhat2KFNLO1sine+3*sqrt(squeeze(P2KFNLO1sine(2,2,:))),'--g',t_cntr,vhat2KFNLO1sine-3*sqrt(squeeze(P2KFNLO1sine(2,2,:))),'--g')
+ylim([-.3 .3])
+xlabel('Time [s]'),ylabel('EKFNLO Velocity [m/s]')
+grid
+hold off
+subplot(3,4,10)
+plot(t_cntr,y2KFNLO1sine(2,:),t_cntr,vahat2KFNLO1sine,t_cntr,vahat2KFNLO1sine+3*sqrt(squeeze(P2KFNLO1sine(3,3,:))),'--g',t_cntr,vahat2KFNLO1sine-3*sqrt(squeeze(P2KFNLO1sine(3,3,:))),'--g')
+ylim([-.3 .3])
+xlabel('Time [s]')
+grid
+subplot(3,4,11)
+hold on
+plot(t_cntr,vhat2KFNLO2sine,'Color',[0.8500 0.3250 0.0980])
+plot(t_cntr,vhat2KFNLO2sine+3*sqrt(squeeze(P2KFNLO2sine(2,2,:))),'--g',t_cntr,vhat2KFNLO2sine-3*sqrt(squeeze(P2KFNLO2sine(2,2,:))),'--g')
+ylim([-.3 .3])
+xlabel('Time [s]')
+grid
+hold off
+subplot(3,4,12)
+plot(t_cntr,y2KFNLO2sine(2,:),t_cntr,vahat2KFNLO2sine,t_cntr,vahat2KFNLO2sine+3*sqrt(squeeze(P2KFNLO2sine(3,3,:))),'--g',t_cntr,vahat2KFNLO2sine-3*sqrt(squeeze(P2KFNLO2sine(3,3,:))),'--g')
+ylim([-.3 .3])
+xlabel('Time [s]')
+legend('Measurement','Estimate','3\sigma Bounds')
+grid
+suptitle('Fluid Velocity Sinusoidal Response Results')
+
+% Heatmap of errors
+figure
+heatmap({'Single-State','Hydrodynamic Linear','Hydrodynamic Quadratic'},{'EKF','NLO','EKFNLO'},sinetbl);
+xlabel('Dynamic Model'),ylabel('Estimator Type')
+title('Thrust Sinusoidal Response RMS Tracking Errors')
 
 %% Step 4a: Import Ramp Response Data
 
@@ -419,6 +657,177 @@ rmse2KFNLO1 = sqrt(mean((T2KFNLO1ramp-Tdramp).^2));
 rmse2KF2 = sqrt(mean((T2KF2ramp-Tdramp).^2));
 rmse2NLO2 = sqrt(mean((T2NLO2ramp-Tdramp).^2));
 rmse2KFNLO2 = sqrt(mean((T2KFNLO2ramp-Tdramp).^2));
-ramptbl = [rmse1 rmse2KF1 rmse2KF2;rmseL rmse2NLO1 rmse2NLO2;0 rmse2KFNLO1 rmse2KFNLO2];
+ramptbl = [rmse1 rmse2KF1 rmse2KF2;rmseL rmse2NLO1 rmse2NLO2;NaN rmse2KFNLO1 rmse2KFNLO2];
 
 %% Step 4b: Plot Ramp Response Data
+
+% Plot thrust results
+figure
+subplot(3,3,1)
+plot(t_data,T1ramp,t_data,Tdramp,'--k')
+ylim([-15 15])
+ylabel('EKF Thrust [N]')
+title('Single-State Thrust Results')
+grid
+subplot(3,3,[4 7])
+plot(t_data,TLramp,t_data,Tdramp,'--k')
+ylim([-15 15])
+xlabel('Time [s]'),ylabel('Lookup Table Thrust [N]')
+grid
+subplot(3,3,2)
+plot(t_data,T2KF1ramp,t_data,Tdramp,'--k')
+ylim([-15 15])
+title('Hydrodynamic Linear Model Thrust Results')
+grid
+subplot(3,3,5)
+plot(t_data,T2NLO1ramp,t_data,Tdramp,'--k')
+ylim([-15 15])
+ylabel('NLO Thrust [N]')
+grid
+subplot(3,3,8)
+plot(t_data,T2KFNLO1ramp,t_data,Tdramp,'--k')
+ylim([-15 15])
+xlabel('Time [s]'),ylabel('EKFNLO Thrust [N]')
+grid
+subplot(3,3,3)
+plot(t_data,T2KF2ramp,t_data,Tdramp,'--k')
+ylim([-15 15])
+title('Hydrodynamic Quadratic Model Thrust Results')
+grid
+subplot(3,3,6)
+plot(t_data,T2NLO2ramp,t_data,Tdramp,'--k')
+ylim([-15 15])
+grid
+subplot(3,3,9)
+plot(t_data,T2KFNLO2ramp,t_data,Tdramp,'--k')
+ylim([-15 15])
+xlabel('Time [s]')
+legend({'Experiment','Desired'},'Location','Southeast')
+grid
+suptitle('Thrust Ramp Response Results')
+
+% Plot angular velocity results
+figure
+subplot(3,3,1)
+plot(t_cntr,sign(nhat1ramp).*y1ramp,t_cntr,nhat1ramp,t_cntr,nd1ramp,'--k',t_cntr,nhat1ramp+3*sqrt(P1ramp),'--g',t_cntr,nhat1ramp-3*sqrt(P1ramp),'--g')
+ylim([-120 120])
+title('Single-State Angular Velocity Results')
+ylabel('EKF Angular Velocity [rad/s]')
+grid
+subplot(3,3,[4 7])
+plot(t_cntr,sign(ndLramp).*yLramp,t_cntr,ndLramp,'--k')
+ylim([-120 120])
+xlabel('Time [s]'),ylabel('Lookup Table Angular Velocity [rad/s]')
+grid
+subplot(3,3,2)
+plot(t_cntr,sign(nhat2KF1ramp).*(y2KF1ramp(1,:).'),t_cntr,nhat2KF1ramp,t_cntr,nd2KF1ramp,'--k',t_cntr,nhat2KF1ramp+3*sqrt(squeeze(P2KF1ramp(1,1,:))),'--g',t_cntr,nhat2KF1ramp-3*sqrt(squeeze(P2KF1ramp(1,1,:))),'--g')
+ylim([-120 120])
+title('Hydrodynamic Linear Model Angular Velocity Results')
+grid
+subplot(3,3,5)
+plot(t_cntr,sign(nhat2NLO1ramp).*(y2NLO1ramp(1,:).'),t_cntr,nhat2NLO1ramp,t_cntr,nd2NLO1ramp,'--k',t_cntr,nhat2NLO1ramp+3*sqrt(P2NLO1ramp),'--g',t_cntr,nhat2NLO1ramp-3*sqrt(P2NLO1ramp),'--g')
+ylim([-120 120])
+ylabel('NLO Angular Velocity [rad/s]')
+grid
+subplot(3,3,8)
+plot(t_cntr,sign(nhat2KFNLO1ramp).*(y2KFNLO1ramp(1,:).'),t_cntr,nhat2KFNLO1ramp,t_cntr,nd2KFNLO1ramp,'--k',t_cntr,nhat2KFNLO1ramp+3*sqrt(squeeze(P2KFNLO1ramp(1,1,:))),'--g',t_cntr,nhat2KFNLO1ramp-3*sqrt(squeeze(P2KFNLO1ramp(1,1,:))),'--g')
+ylim([-120 120])
+xlabel('Time [s]'),ylabel('EKFNLO Angular Velocity [rad/s]')
+grid
+subplot(3,3,3)
+plot(t_cntr,sign(nhat2KF2ramp).*(y2KF2ramp(1,:).'),t_cntr,nhat2KF2ramp,t_cntr,nd2KF2ramp,'--k',t_cntr,nhat2KF2ramp+3*sqrt(squeeze(P2KF2ramp(1,1,:))),'--g',t_cntr,nhat2KF2ramp-3*sqrt(squeeze(P2KF2ramp(1,1,:))),'--g')
+ylim([-120 120])
+title('Hydrodynamic Quadratic Model Angular Velocity Results')
+grid
+subplot(3,3,6)
+plot(t_cntr,sign(nhat2NLO2ramp).*(y2NLO2ramp(1,:).'),t_cntr,nhat2NLO2ramp,t_cntr,nd2NLO2ramp,'--k',t_cntr,nhat2NLO2ramp+3*sqrt(P2NLO2ramp),'--g',t_cntr,nhat2NLO2ramp-3*sqrt(P2NLO2ramp),'--g')
+ylim([-120 120])
+grid
+subplot(3,3,9)
+plot(t_cntr,sign(nhat2KFNLO2ramp).*(y2KFNLO2ramp(1,:).'),t_cntr,nhat2KFNLO2ramp,t_cntr,nd2KFNLO2ramp,'--k',t_cntr,nhat2KFNLO2ramp+3*sqrt(squeeze(P2KFNLO2ramp(1,1,:))),'--g',t_cntr,nhat2KFNLO2ramp-3*sqrt(squeeze(P2KFNLO2ramp(1,1,:))),'--g')
+ylim([-120 120])
+xlabel('Time [s]')
+legend({'Measurement','Estimate','Setpoint','3\sigma Bounds'},'Location','Southeast')
+grid
+suptitle('Angular Velocity Ramp Response Results')
+
+% Plot fluid velocity results
+figure
+subplot(3,4,1)
+hold on
+plot(t_cntr,vhat2KF1ramp,'Color',[0.8500 0.3250 0.0980])
+plot(t_cntr,vhat2KF1ramp+3*sqrt(squeeze(P2KF1ramp(2,2,:))),'--g',t_cntr,vhat2KF1ramp-3*sqrt(squeeze(P2KF1ramp(2,2,:))),'--g')
+ylim([-.3 .3])
+ylabel('EKF Velocity [m/s]')
+title('Hydrodynamic Linear Model Axial Velocity Results')
+grid
+hold off
+subplot(3,4,2)
+plot(t_cntr,y2KF1ramp(2,:),t_cntr,vahat2KF1ramp,t_cntr,vahat2KF1ramp+3*sqrt(squeeze(P2KF1ramp(3,3,:))),'--g',t_cntr,vahat2KF1ramp-3*sqrt(squeeze(P2KF1ramp(3,3,:))),'--g')
+ylim([-.3 .3])
+title('Hydrodynamic Linear Model Ambient Velocity Results')
+grid
+subplot(3,4,3)
+hold on
+plot(t_cntr,vhat2KF2ramp,'Color',[0.8500 0.3250 0.0980])
+plot(t_cntr,vhat2KF2ramp+3*sqrt(squeeze(P2KF2ramp(2,2,:))),'--g',t_cntr,vhat2KF2ramp-3*sqrt(squeeze(P2KF2ramp(2,2,:))),'--g')
+ylim([-.3 .3])
+title('Hydrodynamic Quadratic Model Axial Velocity Results')
+grid
+hold off
+subplot(3,4,4)
+plot(t_cntr,y2KF2ramp(2,:),t_cntr,vahat2KF2ramp,t_cntr,vahat2KF2ramp+3*sqrt(squeeze(P2KF2ramp(3,3,:))),'--g',t_cntr,vahat2KF2ramp-3*sqrt(squeeze(P2KF2ramp(3,3,:))),'--g')
+ylim([-.3 .3])
+title('Hydrodynamic Quadratic Model Ambient Velocity Results')
+grid
+subplot(3,4,5)
+plot(t_cntr,vhat2NLO1ramp,'Color',[0.8500 0.3250 0.0980])
+ylim([-.3 .3])
+ylabel('NLO Velocity [m/s]')
+grid
+subplot(3,4,6)
+plot(t_cntr,y2NLO1ramp(2,:),t_cntr,vahat2NLO1ramp)
+ylim([-.3 .3])
+grid
+subplot(3,4,7)
+plot(t_cntr,vhat2NLO2ramp,'Color',[0.8500 0.3250 0.0980])
+ylim([-.3 .3])
+grid
+subplot(3,4,8)
+plot(t_cntr,y2NLO2ramp(2,:),t_cntr,vahat2NLO2ramp)
+ylim([-.3 .3])
+grid
+subplot(3,4,9)
+hold on
+plot(t_cntr,vhat2KFNLO1ramp,'Color',[0.8500 0.3250 0.0980])
+plot(t_cntr,vhat2KFNLO1ramp+3*sqrt(squeeze(P2KFNLO1ramp(2,2,:))),'--g',t_cntr,vhat2KFNLO1ramp-3*sqrt(squeeze(P2KFNLO1ramp(2,2,:))),'--g')
+ylim([-.3 .3])
+xlabel('Time [s]'),ylabel('EKFNLO Velocity [m/s]')
+grid
+hold off
+subplot(3,4,10)
+plot(t_cntr,y2KFNLO1ramp(2,:),t_cntr,vahat2KFNLO1ramp,t_cntr,vahat2KFNLO1ramp+3*sqrt(squeeze(P2KFNLO1ramp(3,3,:))),'--g',t_cntr,vahat2KFNLO1ramp-3*sqrt(squeeze(P2KFNLO1ramp(3,3,:))),'--g')
+ylim([-.3 .3])
+xlabel('Time [s]')
+grid
+subplot(3,4,11)
+hold on
+plot(t_cntr,vhat2KFNLO2ramp,'Color',[0.8500 0.3250 0.0980])
+plot(t_cntr,vhat2KFNLO2ramp+3*sqrt(squeeze(P2KFNLO2ramp(2,2,:))),'--g',t_cntr,vhat2KFNLO2ramp-3*sqrt(squeeze(P2KFNLO2ramp(2,2,:))),'--g')
+ylim([-.3 .3])
+xlabel('Time [s]')
+grid
+hold off
+subplot(3,4,12)
+plot(t_cntr,y2KFNLO2ramp(2,:),t_cntr,vahat2KFNLO2ramp,t_cntr,vahat2KFNLO2ramp+3*sqrt(squeeze(P2KFNLO2ramp(3,3,:))),'--g',t_cntr,vahat2KFNLO2ramp-3*sqrt(squeeze(P2KFNLO2ramp(3,3,:))),'--g')
+ylim([-.3 .3])
+xlabel('Time [s]')
+legend('Measurement','Estimate','3\sigma Bounds')
+grid
+suptitle('Fluid Velocity Ramp Response Results')
+
+% Heatmap of errors
+figure
+heatmap({'Single-State','Hydrodynamic Linear','Hydrodynamic Quadratic'},{'EKF','NLO','EKFNLO'},ramptbl);
+xlabel('Dynamic Model'),ylabel('Estimator Type')
+title('Thrust Ramp Response RMS Tracking Errors')
