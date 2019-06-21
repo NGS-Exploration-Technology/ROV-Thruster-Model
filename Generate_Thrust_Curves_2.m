@@ -66,4 +66,20 @@ ylabel('Torque [Nm]','FontSize',font,'FontName','Times New Roman')
 legend({'Experiment','Model','Experiment','Model'},'FontSize',font,'FontName','Times New Roman','Location','Northwest')
 set(gca,'FontSize',font,'FontName','Times New Roman')
 grid
+
+font = 12;
+width = 1.5;
+figure
+yyaxis left
+plot(v,T,'o',v,T_fit,'--b','LineWidth',width)
+xlabel('Axial Velocity [m/s]','FontSize',font,'FontName','Times New Roman')
+ylabel('Thrust [N]','FontSize',font,'FontName','Times New Roman')
+
+yyaxis right
+plot(v,Q,'o',v,Q_fit,'--r','LineWidth',width)
+ylabel('Torque [Nm]','FontSize',font,'FontName','Times New Roman')
+
+legend({'Experiment','Model','Experiment','Model'},'FontSize',font,'FontName','Times New Roman','Location','Northwest')
+set(gca,'FontSize',font,'FontName','Times New Roman')
+grid
 end

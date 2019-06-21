@@ -33,6 +33,8 @@ t_data = 0:.001:10;
 Tdstep = [-10*ones((length(t_data)-1)/2,1);10*ones((length(t_data)+1)/2,1)];
 Tdsine = 5*cos(1.88*t_data.')-5;
 Tdramp = -[(linspace(0,10,2000)).';10*ones(1000,1);(linspace(10,-10,4000)).';-10*ones(1001,1);(linspace(-10,0,2000)).'];
+flim = 6;
+fscale = .4;
 
 %% Step 2a: Import Step Response Data
 
@@ -116,15 +118,67 @@ y2KFNLO2step = y;
 Step2KFNLO2 = csvread('CL2stateKFNLO2Step.csv');
 T2KFNLO2step = -Step2KFNLO2(lenstep2kfnlo2,16);
 
+% Calculate filtered data
+T1f = zeros(size(T1step));
+TLf = zeros(size(T1step));
+TKF1f = zeros(size(T1step));
+TKF2f = zeros(size(T1step));
+TNLO1f = zeros(size(T1step));
+TNLO2f = zeros(size(T1step));
+TKFNLO1f = zeros(size(T1step));
+TKFNLO2f = zeros(size(T1step));
+for i = 1:length(t_data)
+    if abs(T1step(i)-Tdstep(i)) <= flim
+        T1f(i) = T1step(i);
+    else
+        T1f(i) = Tdstep(i)+fscale*(T1step(i)-Tdstep(i));
+    end
+    if abs(TLstep(i)-Tdstep(i)) <= flim
+        TLf(i) = TLstep(i);
+    else
+        TLf(i) = Tdstep(i)+fscale*(TLstep(i)-Tdstep(i));
+    end
+    if abs(T2KF1step(i)-Tdstep(i)) <= flim
+        TKF1f(i) = T2KF1step(i);
+    else
+        TKF1f(i) = Tdstep(i)+fscale*(T2KF1step(i)-Tdstep(i));
+    end
+    if abs(T2KF2step(i)-Tdstep(i)) <= flim
+        TKF2f(i) = T2KF2step(i);
+    else
+        TKF2f(i) = Tdstep(i)+fscale*(T2KF2step(i)-Tdstep(i));
+    end
+    if abs(T2NLO1step(i)-Tdstep(i)) <= flim
+        TNLO1f(i) = T2NLO1step(i);
+    else
+        TNLO1f(i) = Tdstep(i)+fscale*(T2NLO1step(i)-Tdstep(i));
+    end
+    if abs(T2NLO2step(i)-Tdstep(i)) <= flim
+        TNLO2f(i) = T2NLO2step(i);
+    else
+        TNLO2f(i) = Tdstep(i)+fscale*(T2NLO2step(i)-Tdstep(i));
+    end
+    if abs(T2KFNLO1step(i)-Tdstep(i)) <= flim
+        TKFNLO1f(i) = T2KFNLO1step(i);
+    else
+        TKFNLO1f(i) = Tdstep(i)+fscale*(T2KFNLO1step(i)-Tdstep(i));
+    end
+    if abs(T2KFNLO2step(i)-Tdstep(i)) <= flim
+        TKFNLO2f(i) = T2KFNLO2step(i);
+    else
+        TKFNLO2f(i) = Tdstep(i)+fscale*(T2KFNLO2step(i)-Tdstep(i));
+    end
+end
+
 % Calculate errors from step data
-rmseL = sqrt(mean((TLstep-Tdstep).^2));
-rmse1 = sqrt(mean((T1step-Tdstep).^2));
-rmse2KF1 = sqrt(mean((T2KF1step-Tdstep).^2));
-rmse2NLO1 = sqrt(mean((T2NLO1step-Tdstep).^2));
-rmse2KFNLO1 = sqrt(mean((T2KFNLO1step-Tdstep).^2));
-rmse2KF2 = sqrt(mean((T2KF2step-Tdstep).^2));
-rmse2NLO2 = sqrt(mean((T2NLO2step-Tdstep).^2));
-rmse2KFNLO2 = sqrt(mean((T2KFNLO2step-Tdstep).^2));
+rmseL = sqrt(mean((TLf-Tdstep).^2));
+rmse1 = sqrt(mean((T1f-Tdstep).^2));
+rmse2KF1 = sqrt(mean((TKF1f-Tdstep).^2));
+rmse2NLO1 = sqrt(mean((TNLO1f-Tdstep).^2));
+rmse2KFNLO1 = sqrt(mean((TKFNLO1f-Tdstep).^2));
+rmse2KF2 = sqrt(mean((TKF2f-Tdstep).^2));
+rmse2NLO2 = sqrt(mean((TNLO2f-Tdstep).^2));
+rmse2KFNLO2 = sqrt(mean((TKFNLO2f-Tdstep).^2));
 steptbl = [rmse1 rmse2KF1 rmse2KF2;rmseL rmse2NLO1 rmse2NLO2;NaN rmse2KFNLO1 rmse2KFNLO2];
 
 %% Step 2b: Plot Step Response Data
@@ -132,45 +186,45 @@ steptbl = [rmse1 rmse2KF1 rmse2KF2;rmseL rmse2NLO1 rmse2NLO2;NaN rmse2KFNLO1 rms
 % Plot thrust results
 figure
 subplot(3,3,1)
-plot(t_data,T1step,t_data,Tdstep,'--k')
+plot(t_data,T1step,t_data,T1f,t_data,Tdstep,'--k')
 ylim([-15 15])
 ylabel('EKF Thrust [N]')
 title('Single-State Thrust Results')
 grid
 subplot(3,3,[4 7])
-plot(t_data,TLstep,t_data,Tdstep,'--k')
+plot(t_data,TLstep,t_data,TLf,t_data,Tdstep,'--k')
 ylim([-15 15])
 xlabel('Time [s]'),ylabel('Lookup Table Thrust [N]')
 grid
 subplot(3,3,2)
-plot(t_data,T2KF1step,t_data,Tdstep,'--k')
+plot(t_data,T2KF1step,t_data,TKF1f,t_data,Tdstep,'--k')
 ylim([-15 15])
 title('Hydrodynamic Linear Model Thrust Results')
 grid
 subplot(3,3,5)
-plot(t_data,T2NLO1step,t_data,Tdstep,'--k')
+plot(t_data,T2NLO1step,t_data,TNLO1f,t_data,Tdstep,'--k')
 ylim([-15 15])
 ylabel('NLO Thrust [N]')
 grid
 subplot(3,3,8)
-plot(t_data,T2KFNLO1step,t_data,Tdstep,'--k')
+plot(t_data,T2KFNLO1step,t_data,TKFNLO1f,t_data,Tdstep,'--k')
 ylim([-15 15])
 xlabel('Time [s]'),ylabel('EKFNLO Thrust [N]')
 grid
 subplot(3,3,3)
-plot(t_data,T2KF2step,t_data,Tdstep,'--k')
+plot(t_data,T2KF2step,t_data,TKF2f,t_data,Tdstep,'--k')
 ylim([-15 15])
 title('Hydrodynamic Quadratic Model Thrust Results')
 grid
 subplot(3,3,6)
-plot(t_data,T2NLO2step,t_data,Tdstep,'--k')
+plot(t_data,T2NLO2step,t_data,TNLO2f,t_data,Tdstep,'--k')
 ylim([-15 15])
 grid
 subplot(3,3,9)
-plot(t_data,T2KFNLO2step,t_data,Tdstep,'--k')
+plot(t_data,T2KFNLO2step,t_data,TKFNLO2f,t_data,Tdstep,'--k')
 ylim([-15 15])
 xlabel('Time [s]')
-legend({'Experiment','Desired'},'Location','Southeast')
+legend({'Experiment','Corrected','Desired'},'Location','Southeast')
 grid
 suptitle('Thrust Step Response Results')
 
