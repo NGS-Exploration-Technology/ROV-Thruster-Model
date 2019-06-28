@@ -33,8 +33,11 @@ t_data = 0:.001:10;
 Tdstep = [-10*ones((length(t_data)-1)/2,1);10*ones((length(t_data)+1)/2,1)];
 Tdsine = 5*cos(1.88*t_data.')-5;
 Tdramp = -[(linspace(0,10,2000)).';10*ones(1000,1);(linspace(10,-10,4000)).';-10*ones(1001,1);(linspace(-10,0,2000)).'];
-flim = 6;
-fscale = .4;
+steplim1 = 1200;
+steplim2 = 6200;
+ramplim1 = 600;
+ramplim2 = 4800;
+ramplim3 = 6000;
 
 %% Step 2a: Import Step Response Data
 
@@ -119,67 +122,25 @@ Step2KFNLO2 = csvread('CL2stateKFNLO2Step.csv');
 T2KFNLO2step = -Step2KFNLO2(lenstep2kfnlo2,16);
 
 % Calculate filtered data
-T1f = zeros(size(T1step));
-TLf = zeros(size(T1step));
-TKF1f = zeros(size(T1step));
-TKF2f = zeros(size(T1step));
-TNLO1f = zeros(size(T1step));
-TNLO2f = zeros(size(T1step));
-TKFNLO1f = zeros(size(T1step));
-TKFNLO2f = zeros(size(T1step));
-for i = 1:length(t_data)
-    if abs(T1step(i)-Tdstep(i)) <= flim
-        T1f(i) = T1step(i);
-    else
-        T1f(i) = Tdstep(i)+fscale*(T1step(i)-Tdstep(i));
-    end
-    if abs(TLstep(i)-Tdstep(i)) <= flim
-        TLf(i) = TLstep(i);
-    else
-        TLf(i) = Tdstep(i)+fscale*(TLstep(i)-Tdstep(i));
-    end
-    if abs(T2KF1step(i)-Tdstep(i)) <= flim
-        TKF1f(i) = T2KF1step(i);
-    else
-        TKF1f(i) = Tdstep(i)+fscale*(T2KF1step(i)-Tdstep(i));
-    end
-    if abs(T2KF2step(i)-Tdstep(i)) <= flim
-        TKF2f(i) = T2KF2step(i);
-    else
-        TKF2f(i) = Tdstep(i)+fscale*(T2KF2step(i)-Tdstep(i));
-    end
-    if abs(T2NLO1step(i)-Tdstep(i)) <= flim
-        TNLO1f(i) = T2NLO1step(i);
-    else
-        TNLO1f(i) = Tdstep(i)+fscale*(T2NLO1step(i)-Tdstep(i));
-    end
-    if abs(T2NLO2step(i)-Tdstep(i)) <= flim
-        TNLO2f(i) = T2NLO2step(i);
-    else
-        TNLO2f(i) = Tdstep(i)+fscale*(T2NLO2step(i)-Tdstep(i));
-    end
-    if abs(T2KFNLO1step(i)-Tdstep(i)) <= flim
-        TKFNLO1f(i) = T2KFNLO1step(i);
-    else
-        TKFNLO1f(i) = Tdstep(i)+fscale*(T2KFNLO1step(i)-Tdstep(i));
-    end
-    if abs(T2KFNLO2step(i)-Tdstep(i)) <= flim
-        TKFNLO2f(i) = T2KFNLO2step(i);
-    else
-        TKFNLO2f(i) = Tdstep(i)+fscale*(T2KFNLO2step(i)-Tdstep(i));
-    end
-end
+T1f = [NaN(steplim1,1);T1step((steplim1+1):((length(T1step)-1)/2));NaN(steplim2-((length(T1step)-1)/2),1);T1step((steplim2+1):end)];
+TLf = [NaN(steplim1,1);TLstep((steplim1+1):((length(TLstep)-1)/2));NaN(steplim2-((length(TLstep)-1)/2),1);TLstep((steplim2+1):end)];
+TKF1f = [NaN(steplim1,1);T2KF1step((steplim1+1):((length(T2KF1step)-1)/2));NaN(steplim2-((length(T2KF1step)-1)/2),1);T2KF1step((steplim2+1):end)];
+TKF2f = [NaN(steplim1,1);T2KF2step((steplim1+1):((length(T2KF2step)-1)/2));NaN(steplim2-((length(T2KF2step)-1)/2),1);T2KF2step((steplim2+1):end)];
+TNLO1f = [NaN(steplim1,1);T2NLO1step((steplim1+1):((length(T2NLO1step)-1)/2));NaN(steplim2-((length(T2NLO1step)-1)/2),1);T2NLO1step((steplim2+1):end)];
+TNLO2f = [NaN(steplim1,1);T2NLO2step((steplim1+1):((length(T2NLO2step)-1)/2));NaN(steplim2-((length(T2NLO2step)-1)/2),1);T2NLO2step((steplim2+1):end)];
+TKFNLO1f = [NaN(steplim1,1);T2KFNLO1step((steplim1+1):((length(T2KFNLO1step)-1)/2));NaN(steplim2-((length(T2KFNLO1step)-1)/2),1);T2KFNLO1step((steplim2+1):end)];
+TKFNLO2f = [NaN(steplim1,1);T2KFNLO2step((steplim1+1):((length(T2KFNLO2step)-1)/2));NaN(steplim2-((length(T2KFNLO2step)-1)/2),1);T2KFNLO2step((steplim2+1):end)];
 
 % Calculate errors from step data
-rmseL = sqrt(mean((TLf-Tdstep).^2));
-rmse1 = sqrt(mean((T1f-Tdstep).^2));
-rmse2KF1 = sqrt(mean((TKF1f-Tdstep).^2));
-rmse2NLO1 = sqrt(mean((TNLO1f-Tdstep).^2));
-rmse2KFNLO1 = sqrt(mean((TKFNLO1f-Tdstep).^2));
-rmse2KF2 = sqrt(mean((TKF2f-Tdstep).^2));
-rmse2NLO2 = sqrt(mean((TNLO2f-Tdstep).^2));
-rmse2KFNLO2 = sqrt(mean((TKFNLO2f-Tdstep).^2));
-steptbl = [rmse1 rmse2KF1 rmse2KF2;rmseL rmse2NLO1 rmse2NLO2;NaN rmse2KFNLO1 rmse2KFNLO2];
+rmseL = sqrt(nanmean((TLf-Tdstep).^2));
+rmse1 = sqrt(nanmean((T1f-Tdstep).^2))/rmseL;
+rmse2KF1 = sqrt(nanmean((TKF1f-Tdstep).^2))/rmseL;
+rmse2NLO1 = sqrt(nanmean((TNLO1f-Tdstep).^2))/rmseL;
+rmse2KFNLO1 = sqrt(nanmean((TKFNLO1f-Tdstep).^2))/rmseL;
+rmse2KF2 = sqrt(nanmean((TKF2f-Tdstep).^2))/rmseL;
+rmse2NLO2 = sqrt(nanmean((TNLO2f-Tdstep).^2))/rmseL;
+rmse2KFNLO2 = sqrt(nanmean((TKFNLO2f-Tdstep).^2))/rmseL;
+steptbl = [rmse1 rmse2KF1 rmse2KF2;NaN rmse2NLO1 rmse2NLO2;NaN rmse2KFNLO1 rmse2KFNLO2];
 
 %% Step 2b: Plot Step Response Data
 
@@ -352,7 +313,7 @@ suptitle('Fluid Velocity Step Response Results')
 figure
 heatmap({'Single-State','Hydrodynamic Linear','Hydrodynamic Quadratic'},{'EKF','NLO','EKFNLO'},steptbl);
 xlabel('Dynamic Model'),ylabel('Estimator Type')
-title('Thrust Step Response RMS Tracking Errors')
+title('Thrust Step Response Normalized RMS Tracking Errors')
 
 %% Step 3a: Import Sinusoidal Response Data
 
@@ -438,14 +399,14 @@ T2KFNLO2sine = -Sine2KFNLO2(lensine2kfnlo2,16);
 
 % Calculate errors from sine data
 rmseL = sqrt(mean((TLsine-Tdsine).^2));
-rmse1 = sqrt(mean((T1sine-Tdsine).^2));
-rmse2KF1 = sqrt(mean((T2KF1sine-Tdsine).^2));
-rmse2NLO1 = sqrt(mean((T2NLO1sine-Tdsine).^2));
-rmse2KFNLO1 = sqrt(mean((T2KFNLO1sine-Tdsine).^2));
-rmse2KF2 = sqrt(mean((T2KF2sine-Tdsine).^2));
-rmse2NLO2 = sqrt(mean((T2NLO2sine-Tdsine).^2));
-rmse2KFNLO2 = sqrt(mean((T2KFNLO2sine-Tdsine).^2));
-sinetbl = [rmse1 rmse2KF1 rmse2KF2;rmseL rmse2NLO1 rmse2NLO2;NaN rmse2KFNLO1 rmse2KFNLO2];
+rmse1 = sqrt(mean((T1sine-Tdsine).^2))/rmseL;
+rmse2KF1 = sqrt(mean((T2KF1sine-Tdsine).^2))/rmseL;
+rmse2NLO1 = sqrt(mean((T2NLO1sine-Tdsine).^2))/rmseL;
+rmse2KFNLO1 = sqrt(mean((T2KFNLO1sine-Tdsine).^2))/rmseL;
+rmse2KF2 = sqrt(mean((T2KF2sine-Tdsine).^2))/rmseL;
+rmse2NLO2 = sqrt(mean((T2NLO2sine-Tdsine).^2))/rmseL;
+rmse2KFNLO2 = sqrt(mean((T2KFNLO2sine-Tdsine).^2))/rmseL;
+sinetbl = [rmse1 rmse2KF1 rmse2KF2;NaN rmse2NLO1 rmse2NLO2;NaN rmse2KFNLO1 rmse2KFNLO2];
 
 %% Step 3b: Plot Sinusoidal Response Data
 
@@ -618,7 +579,7 @@ suptitle('Fluid Velocity Sinusoidal Response Results')
 figure
 heatmap({'Single-State','Hydrodynamic Linear','Hydrodynamic Quadratic'},{'EKF','NLO','EKFNLO'},sinetbl);
 xlabel('Dynamic Model'),ylabel('Estimator Type')
-title('Thrust Sinusoidal Response RMS Tracking Errors')
+title('Thrust Sinusoidal Response Normalized RMS Tracking Errors')
 
 %% Step 4a: Import Ramp Response Data
 
@@ -702,61 +663,71 @@ y2KFNLO2ramp = y;
 Ramp2KFNLO2 = csvread('CL2stateKFNLO2Ramp.csv');
 T2KFNLO2ramp = -Ramp2KFNLO2(lenramp2kfnlo2,16);
 
-% Calculate errors from ramp data
-rmseL = sqrt(mean((TLramp-Tdramp).^2));
-rmse1 = sqrt(mean((T1ramp-Tdramp).^2));
-rmse2KF1 = sqrt(mean((T2KF1ramp-Tdramp).^2));
-rmse2NLO1 = sqrt(mean((T2NLO1ramp-Tdramp).^2));
-rmse2KFNLO1 = sqrt(mean((T2KFNLO1ramp-Tdramp).^2));
-rmse2KF2 = sqrt(mean((T2KF2ramp-Tdramp).^2));
-rmse2NLO2 = sqrt(mean((T2NLO2ramp-Tdramp).^2));
-rmse2KFNLO2 = sqrt(mean((T2KFNLO2ramp-Tdramp).^2));
-ramptbl = [rmse1 rmse2KF1 rmse2KF2;rmseL rmse2NLO1 rmse2NLO2;NaN rmse2KFNLO1 rmse2KFNLO2];
+% Calculate filtered data
+T1f = [NaN(ramplim1,1);T1ramp((ramplim1+1):ramplim2);NaN(size(T1ramp((ramplim2+1):ramplim3)));T1ramp((ramplim3+1):end)];
+TLf = [NaN(ramplim1,1);TLramp((ramplim1+1):ramplim2);NaN(size(TLramp((ramplim2+1):ramplim3)));TLramp((ramplim3+1):end)];
+TKF1f = [NaN(ramplim1,1);T2KF1ramp((ramplim1+1):ramplim2);NaN(size(T2KF1ramp((ramplim2+1):ramplim3)));T2KF1ramp((ramplim3+1):end)];
+TKF2f = [NaN(ramplim1,1);T2KF2ramp((ramplim1+1):ramplim2);NaN(size(T2KF2ramp((ramplim2+1):ramplim3)));T2KF2ramp((ramplim3+1):end)];
+TNLO1f = [NaN(ramplim1,1);T2NLO1ramp((ramplim1+1):ramplim2);NaN(size(T2NLO1ramp((ramplim2+1):ramplim3)));T2NLO1ramp((ramplim3+1):end)];
+TNLO2f = [NaN(ramplim1,1);T2NLO2ramp((ramplim1+1):ramplim2);NaN(size(T2NLO2ramp((ramplim2+1):ramplim3)));T2NLO2ramp((ramplim3+1):end)];
+TKFNLO1f = [NaN(ramplim1,1);T2KFNLO1ramp((ramplim1+1):ramplim2);NaN(size(T2KFNLO1ramp((ramplim2+1):ramplim3)));T2KFNLO1ramp((ramplim3+1):end)];
+TKFNLO2f = [NaN(ramplim1,1);T2KFNLO2ramp((ramplim1+1):ramplim2);NaN(size(T2KFNLO2ramp((ramplim2+1):ramplim3)));T2KFNLO2ramp((ramplim3+1):end)];
+
+% Calculate errors from step data
+rmseL = sqrt(nanmean((TLf-Tdramp).^2));
+rmse1 = sqrt(nanmean((T1f-Tdramp).^2))/rmseL;
+rmse2KF1 = sqrt(nanmean((TKF1f-Tdramp).^2))/rmseL;
+rmse2NLO1 = sqrt(nanmean((TNLO1f-Tdramp).^2))/rmseL;
+rmse2KFNLO1 = sqrt(nanmean((TKFNLO1f-Tdramp).^2))/rmseL;
+rmse2KF2 = sqrt(nanmean((TKF2f-Tdramp).^2))/rmseL;
+rmse2NLO2 = sqrt(nanmean((TNLO2f-Tdramp).^2))/rmseL;
+rmse2KFNLO2 = sqrt(nanmean((TKFNLO2f-Tdramp).^2))/rmseL;
+ramptbl = [rmse1 rmse2KF1 rmse2KF2;NaN rmse2NLO1 rmse2NLO2;NaN rmse2KFNLO1 rmse2KFNLO2];
 
 %% Step 4b: Plot Ramp Response Data
 
 % Plot thrust results
 figure
 subplot(3,3,1)
-plot(t_data,T1ramp,t_data,Tdramp,'--k')
+plot(t_data,T1ramp,t_data,T1f,t_data,Tdramp,'--k')
 ylim([-15 15])
 ylabel('EKF Thrust [N]')
 title('Single-State Thrust Results')
 grid
 subplot(3,3,[4 7])
-plot(t_data,TLramp,t_data,Tdramp,'--k')
+plot(t_data,TLramp,t_data,TLf,t_data,Tdramp,'--k')
 ylim([-15 15])
 xlabel('Time [s]'),ylabel('Lookup Table Thrust [N]')
 grid
 subplot(3,3,2)
-plot(t_data,T2KF1ramp,t_data,Tdramp,'--k')
+plot(t_data,T2KF1ramp,t_data,TKF1f,t_data,Tdramp,'--k')
 ylim([-15 15])
 title('Hydrodynamic Linear Model Thrust Results')
 grid
 subplot(3,3,5)
-plot(t_data,T2NLO1ramp,t_data,Tdramp,'--k')
+plot(t_data,T2NLO1ramp,t_data,TNLO1f,t_data,Tdramp,'--k')
 ylim([-15 15])
 ylabel('NLO Thrust [N]')
 grid
 subplot(3,3,8)
-plot(t_data,T2KFNLO1ramp,t_data,Tdramp,'--k')
+plot(t_data,T2KFNLO1ramp,t_data,TKFNLO1f,t_data,Tdramp,'--k')
 ylim([-15 15])
 xlabel('Time [s]'),ylabel('EKFNLO Thrust [N]')
 grid
 subplot(3,3,3)
-plot(t_data,T2KF2ramp,t_data,Tdramp,'--k')
+plot(t_data,T2KF2ramp,t_data,TKF2f,t_data,Tdramp,'--k')
 ylim([-15 15])
 title('Hydrodynamic Quadratic Model Thrust Results')
 grid
 subplot(3,3,6)
-plot(t_data,T2NLO2ramp,t_data,Tdramp,'--k')
+plot(t_data,T2NLO2ramp,t_data,TNLO2f,t_data,Tdramp,'--k')
 ylim([-15 15])
 grid
 subplot(3,3,9)
-plot(t_data,T2KFNLO2ramp,t_data,Tdramp,'--k')
+plot(t_data,T2KFNLO2ramp,t_data,TKFNLO2f,t_data,Tdramp,'--k')
 ylim([-15 15])
 xlabel('Time [s]')
-legend({'Experiment','Desired'},'Location','Southeast')
+legend({'Experiment','Corrected','Desired'},'Location','Southeast')
 grid
 suptitle('Thrust Ramp Response Results')
 
@@ -884,4 +855,4 @@ suptitle('Fluid Velocity Ramp Response Results')
 figure
 heatmap({'Single-State','Hydrodynamic Linear','Hydrodynamic Quadratic'},{'EKF','NLO','EKFNLO'},ramptbl);
 xlabel('Dynamic Model'),ylabel('Estimator Type')
-title('Thrust Ramp Response RMS Tracking Errors')
+title('Thrust Ramp Response Normalized RMS Tracking Errors')
