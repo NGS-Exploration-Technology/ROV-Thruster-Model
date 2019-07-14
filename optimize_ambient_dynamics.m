@@ -92,21 +92,42 @@ for i = 2:length(v_fitm3)
     v_fitm3(i) = v_fitm3(i-1)+d_v*dt;
 end
 
+% figure
+% subplot(4,1,1)
+% plot(tp3,Vp3,tp3,v_fitp3,'--k')
+% legend('Data','Model')
+% grid
+% subplot(4,1,2)
+% plot(tp2,Vp2,tp2,v_fitp2,'--k')
+% ylabel('Ambient Velocity, V, [m/s]')
+% grid
+% subplot(4,1,3)
+% plot(tm2,Vm2,tm2,v_fitm2,'--k')
+% grid
+% subplot(4,1,4)
+% plot(tm3,Vm3,tm3,v_fitm3,'--k')
+% xlabel('Time, t, [sec]')
+% grid
+
 figure
-subplot(4,1,1)
+subplot(2,1,1)
 plot(tp3,Vp3,tp3,v_fitp3,'--k')
-legend('Data','Model')
+ylim([-.4 .4])
+yticks(-.4:.2:.4)
+xlim([0 8])
+legend({'Data','Model'},'Location','Southeast','FontSize',18,'FontName','Times New Roman')
+set(gca,'FontSize',18,'FontName','Times New Roman')
 grid
-subplot(4,1,2)
-plot(tp2,Vp2,tp2,v_fitp2,'--k')
-ylabel('Ambient Velocity, V, [m/s]')
-grid
-subplot(4,1,3)
-plot(tm2,Vm2,tm2,v_fitm2,'--k')
-grid
-subplot(4,1,4)
+subplot(2,1,2)
 plot(tm3,Vm3,tm3,v_fitm3,'--k')
-xlabel('Time, t, [sec]')
+ylim([-.4 .4])
+yticks(-.4:.2:.4)
+xlim([0 8])
+xlabel('Time [s]','FontSize',18,'FontName','Times New Roman')
+set(gca,'FontSize',18,'FontName','Times New Roman')
 grid
+[~,ylab] = suplabel('Velocity [m/s]','y');
+set(ylab,'FontSize',18,'FontName','Times New Roman')
+
 
 end

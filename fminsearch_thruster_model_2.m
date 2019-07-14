@@ -197,70 +197,130 @@ for i = 2:length(n_fitm3)
 end
 
 % Generate plots
+% figure
+% subplot(4,1,1)
+% plot(tp3,np3,tp3,n_fitp3,'--k')
+% grid
+% subplot(4,1,2)
+% plot(tp2,np2,tp2,n_fitp2,'--k')
+% legend('Data','Model')
+% ylabel('Rotor Speed, n, [rad/s]')
+% grid
+% subplot(4,1,3)
+% plot(tm2,nm2,tm2,n_fitm2,'--k')
+% grid
+% subplot(4,1,4)
+% plot(tm3,nm3,tm3,n_fitm3,'--k')
+% xlabel('Time, t, [sec]')
+% grid
+% 
+% figure
+% subplot(4,1,1)
+% plot(tvp3,vp3,tvp3,v_fitp3,'--k')
+% grid
+% subplot(4,1,2)
+% plot(tvp2,vp2,tvp2,v_fitp2,'--k')
+% legend('Data','Model')
+% ylabel('Axial Velocity, v, [m/s]')
+% grid
+% subplot(4,1,3)
+% plot(tvm2,vm2,tvm2,v_fitm2,'--k')
+% grid
+% subplot(4,1,4)
+% plot(tvm3,vm3,tvm3,v_fitm3,'--k')
+% xlabel('Time, t, [sec]')
+% grid
+% 
+% figure
+% subplot(4,1,1)
+% plot(tp3,Tp3,tvp3,T_fitp3,'--k')
+% grid
+% subplot(4,1,2)
+% plot(tp2,Tp2,tvp2,T_fitp2,'--k')
+% legend('Data','Model')
+% ylabel('Thrust, T, [N]')
+% grid
+% subplot(4,1,3)
+% plot(tm2,Tm2,tvm2,T_fitm2,'--k')
+% grid
+% subplot(4,1,4)
+% plot(tm3,Tm3,tvm3,T_fitm3,'--k')
+% xlabel('Time, t, [sec]')
+% grid
+% 
+% figure
+% subplot(4,1,1)
+% plot(tp3,Qp3,tp3,Q_fitp3,'--k')
+% grid
+% subplot(4,1,2)
+% plot(tp2,Qp2,tp2,Q_fitp2,'--k')
+% legend('Data','Model')
+% ylabel('Torque, Q, [N*m]')
+% grid
+% subplot(4,1,3)
+% plot(tm2,Qm2,tm2,Q_fitm2,'--k')
+% grid
+% subplot(4,1,4)
+% plot(tm3,Qm3,tm3,Q_fitm3,'--k')
+% xlabel('Time, t, [sec]')
+% grid
+
 figure
-subplot(4,1,1)
+subplot(2,1,1)
 plot(tp3,np3,tp3,n_fitp3,'--k')
+ylim([-120 120])
+yticks(-120:60:120)
+xlim([0 8])
+legend({'Data','Model'},'Location','Southeast','FontSize',18,'FontName','Times New Roman')
+set(gca,'FontSize',18,'FontName','Times New Roman')
 grid
-subplot(4,1,2)
-plot(tp2,np2,tp2,n_fitp2,'--k')
-legend('Data','Model')
-ylabel('Rotor Speed, n, [rad/s]')
-grid
-subplot(4,1,3)
-plot(tm2,nm2,tm2,n_fitm2,'--k')
-grid
-subplot(4,1,4)
+subplot(2,1,2)
 plot(tm3,nm3,tm3,n_fitm3,'--k')
-xlabel('Time, t, [sec]')
+ylim([-120 120])
+yticks(-120:60:120)
+xlim([0 8])
+xlabel('Time [s]','FontSize',18,'FontName','Times New Roman')
+set(gca,'FontSize',18,'FontName','Times New Roman')
 grid
+[~,ylab] = suplabel('Angular Velocity [rad/s]','y');
+set(ylab,'FontSize',18,'FontName','Times New Roman')
 
 figure
-subplot(4,1,1)
-plot(tvp3,vp3,tvp3,v_fitp3,'--k')
-grid
-subplot(4,1,2)
-plot(tvp2,vp2,tvp2,v_fitp2,'--k')
-legend('Data','Model')
-ylabel('Axial Velocity, v, [m/s]')
-grid
-subplot(4,1,3)
-plot(tvm2,vm2,tvm2,v_fitm2,'--k')
-grid
-subplot(4,1,4)
-plot(tvm3,vm3,tvm3,v_fitm3,'--k')
-xlabel('Time, t, [sec]')
-grid
-
-figure
-subplot(4,1,1)
+subplot(2,1,1)
 plot(tp3,Tp3,tvp3,T_fitp3,'--k')
+ylim([-16 16])
+yticks(-16:8:16)
+xlim([0 8])
+legend({'Data','Model'},'Location','Southeast','FontSize',18,'FontName','Times New Roman')
+set(gca,'FontSize',18,'FontName','Times New Roman')
 grid
-subplot(4,1,2)
-plot(tp2,Tp2,tvp2,T_fitp2,'--k')
-legend('Data','Model')
-ylabel('Thrust, T, [N]')
-grid
-subplot(4,1,3)
-plot(tm2,Tm2,tvm2,T_fitm2,'--k')
-grid
-subplot(4,1,4)
+subplot(2,1,2)
 plot(tm3,Tm3,tvm3,T_fitm3,'--k')
-xlabel('Time, t, [sec]')
+ylim([-16 16])
+yticks(-16:8:16)
+xlim([0 8])
+xlabel('Time [s]','FontSize',18,'FontName','Times New Roman')
+set(gca,'FontSize',18,'FontName','Times New Roman')
 grid
+[~,ylab] = suplabel('Thrust [N]','y');
+set(ylab,'FontSize',18,'FontName','Times New Roman')
 
 figure
-subplot(4,1,1)
+subplot(2,1,1)
 plot(tp3,Qp3,tp3,Q_fitp3,'--k')
+ylim([-.2 .2])
+yticks(-.2:.1:.2)
+xlim([0 8])
+legend({'Data','Model'},'Location','Southeast','FontSize',18,'FontName','Times New Roman')
+set(gca,'FontSize',18,'FontName','Times New Roman')
 grid
-subplot(4,1,2)
-plot(tp2,Qp2,tp2,Q_fitp2,'--k')
-legend('Data','Model')
-ylabel('Torque, Q, [N*m]')
-grid
-subplot(4,1,3)
-plot(tm2,Qm2,tm2,Q_fitm2,'--k')
-grid
-subplot(4,1,4)
+subplot(2,1,2)
 plot(tm3,Qm3,tm3,Q_fitm3,'--k')
-xlabel('Time, t, [sec]')
+ylim([-.2 .2])
+yticks(-.2:.1:.2)
+xlim([0 8])
+xlabel('Time [s]','FontSize',18,'FontName','Times New Roman')
+set(gca,'FontSize',18,'FontName','Times New Roman')
 grid
+[~,ylab] = suplabel('Torque [Nm]','y');
+set(ylab,'FontSize',18,'FontName','Times New Roman')

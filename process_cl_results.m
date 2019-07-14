@@ -38,6 +38,7 @@ steplim2 = 6200;
 ramplim1 = 600;
 ramplim2 = 4800;
 ramplim3 = 6000;
+font = 12;
 
 %% Step 2a: Import Step Response Data
 
@@ -146,48 +147,58 @@ steptbl = [rmse1 rmse2KF1 rmse2KF2;NaN rmse2NLO1 rmse2NLO2;NaN rmse2KFNLO1 rmse2
 
 % Plot thrust results
 figure
-subplot(3,3,1)
+subplot(6,3,[1 4])
 plot(t_data,T1step,t_data,T1f,t_data,Tdstep,'--k')
 ylim([-15 15])
-ylabel('EKF Thrust [N]')
-title('Single-State Thrust Results')
+ylabel('EKF','FontSize',font,'FontName','Times New Roman')
+title('Simplified Model','FontSize',font,'FontName','Times New Roman')
 grid
-subplot(3,3,[4 7])
+set(gca,'FontName','Times New Roman')
+subplot(6,3,[10 13])
 plot(t_data,TLstep,t_data,TLf,t_data,Tdstep,'--k')
 ylim([-15 15])
-xlabel('Time [s]'),ylabel('Lookup Table Thrust [N]')
+ylabel('Lookup Table','FontSize',font,'FontName','Times New Roman')
 grid
-subplot(3,3,2)
+set(gca,'FontName','Times New Roman')
+subplot(6,3,[2 5])
 plot(t_data,T2KF1step,t_data,TKF1f,t_data,Tdstep,'--k')
 ylim([-15 15])
-title('Hydrodynamic Linear Model Thrust Results')
+title('HL Model','FontSize',font,'FontName','Times New Roman')
 grid
-subplot(3,3,5)
+set(gca,'FontName','Times New Roman')
+subplot(6,3,[8 11])
 plot(t_data,T2NLO1step,t_data,TNLO1f,t_data,Tdstep,'--k')
 ylim([-15 15])
-ylabel('NLO Thrust [N]')
+ylabel('NLO','FontSize',font,'FontName','Times New Roman')
 grid
-subplot(3,3,8)
+set(gca,'FontName','Times New Roman')
+subplot(6,3,[14 17])
 plot(t_data,T2KFNLO1step,t_data,TKFNLO1f,t_data,Tdstep,'--k')
 ylim([-15 15])
-xlabel('Time [s]'),ylabel('EKFNLO Thrust [N]')
+ylabel('KFNLO','FontSize',font,'FontName','Times New Roman')
 grid
-subplot(3,3,3)
+set(gca,'FontName','Times New Roman')
+subplot(6,3,[3 6])
 plot(t_data,T2KF2step,t_data,TKF2f,t_data,Tdstep,'--k')
 ylim([-15 15])
-title('Hydrodynamic Quadratic Model Thrust Results')
+title('HQ Model','FontSize',font,'FontName','Times New Roman')
+legend({'Experiment','Corrected','Desired'},'Location','Northwest','FontName','Times New Roman')
 grid
-subplot(3,3,6)
+set(gca,'FontName','Times New Roman')
+subplot(6,3,[9 12])
 plot(t_data,T2NLO2step,t_data,TNLO2f,t_data,Tdstep,'--k')
 ylim([-15 15])
 grid
-subplot(3,3,9)
+set(gca,'FontName','Times New Roman')
+subplot(6,3,[15 18])
 plot(t_data,T2KFNLO2step,t_data,TKFNLO2f,t_data,Tdstep,'--k')
 ylim([-15 15])
-xlabel('Time [s]')
-legend({'Experiment','Corrected','Desired'},'Location','Southeast')
+set(gca,'FontName','Times New Roman')
 grid
-suptitle('Thrust Step Response Results')
+[~,xlab] = suplabel('Time [s]');
+[~,ylab] = suplabel('Thrust [N]','y');
+set(xlab,'FontSize',16,'FontName','Times New Roman')
+set(ylab,'FontSize',16,'FontName','Times New Roman')
 
 % Plot angular velocity results
 figure
@@ -311,9 +322,13 @@ suptitle('Fluid Velocity Step Response Results')
 
 % Heatmap of errors
 figure
-heatmap({'Single-State','Hydrodynamic Linear','Hydrodynamic Quadratic'},{'EKF','NLO','EKFNLO'},steptbl);
-xlabel('Dynamic Model'),ylabel('Estimator Type')
-title('Thrust Step Response Normalized RMS Tracking Errors')
+heatmap({'Simplified','HL','HQ'},{'EKF','NLO','KFNLO'},steptbl);
+caxis([.5 1.8])
+set(gca,'FontSize',font,'FontName','Times New Roman','MissingDataLabel','N/A')
+[~,yylab] = suplabel('Normalized Tracking RMSE','yy');
+set(yylab,'FontSize',font,'FontName','Times New Roman')
+% xlabel('Dynamic Model'),ylabel('Estimator Type')
+% title('Thrust Step Response Normalized RMS Tracking Errors')
 
 %% Step 3a: Import Sinusoidal Response Data
 
@@ -412,93 +427,113 @@ sinetbl = [rmse1 rmse2KF1 rmse2KF2;NaN rmse2NLO1 rmse2NLO2;NaN rmse2KFNLO1 rmse2
 
 % Plot thrust results
 figure
-subplot(3,3,1)
+subplot(6,3,[1 4])
 plot(t_data,T1sine,t_data,Tdsine,'--k')
-ylim([-15 0])
-ylabel('EKF Thrust [N]')
-title('Single-State Thrust Results')
+ylim([-15 15])
+ylabel('EKF','FontSize',font,'FontName','Times New Roman')
+title('Simplified Model','FontSize',font,'FontName','Times New Roman')
 grid
-subplot(3,3,[4 7])
+set(gca,'FontName','Times New Roman')
+subplot(6,3,[10 13])
 plot(t_data,TLsine,t_data,Tdsine,'--k')
-ylim([-15 0])
-xlabel('Time [s]'),ylabel('Lookup Table Thrust [N]')
+ylim([-15 15])
+ylabel('Lookup Table','FontSize',font,'FontName','Times New Roman')
 grid
-subplot(3,3,2)
+set(gca,'FontName','Times New Roman')
+subplot(6,3,[2 5])
 plot(t_data,T2KF1sine,t_data,Tdsine,'--k')
-ylim([-15 0])
-title('Hydrodynamic Linear Model Thrust Results')
+ylim([-15 15])
+title('HL Model','FontSize',font,'FontName','Times New Roman')
 grid
-subplot(3,3,5)
+set(gca,'FontName','Times New Roman')
+subplot(6,3,[8 11])
 plot(t_data,T2NLO1sine,t_data,Tdsine,'--k')
-ylim([-15 0])
-ylabel('NLO Thrust [N]')
+ylim([-15 15])
+ylabel('NLO','FontSize',font,'FontName','Times New Roman')
 grid
-subplot(3,3,8)
+set(gca,'FontName','Times New Roman')
+subplot(6,3,[14 17])
 plot(t_data,T2KFNLO1sine,t_data,Tdsine,'--k')
-ylim([-15 0])
-xlabel('Time [s]'),ylabel('EKFNLO Thrust [N]')
+ylim([-15 15])
+ylabel('KFNLO','FontSize',font,'FontName','Times New Roman')
 grid
-subplot(3,3,3)
+set(gca,'FontName','Times New Roman')
+subplot(6,3,[3 6])
 plot(t_data,T2KF2sine,t_data,Tdsine,'--k')
-ylim([-15 0])
-title('Hydrodynamic Quadratic Model Thrust Results')
+ylim([-15 15])
+title('HQ Model','FontSize',font,'FontName','Times New Roman')
+legend({'Experiment','Desired'},'Location','Northwest','FontName','Times New Roman')
 grid
-subplot(3,3,6)
+set(gca,'FontName','Times New Roman')
+subplot(6,3,[9 12])
 plot(t_data,T2NLO2sine,t_data,Tdsine,'--k')
-ylim([-15 0])
+ylim([-15 15])
 grid
-subplot(3,3,9)
+set(gca,'FontName','Times New Roman')
+subplot(6,3,[15 18])
 plot(t_data,T2KFNLO2sine,t_data,Tdsine,'--k')
-ylim([-15 0])
-xlabel('Time [s]')
-legend({'Experiment','Desired'},'Location','Southeast')
+ylim([-15 15])
+set(gca,'FontName','Times New Roman')
 grid
-suptitle('Thrust Sinusoidal Response Results')
+[~,xlab] = suplabel('Time [s]');
+[~,ylab] = suplabel('Thrust [N]','y');
+set(xlab,'FontSize',16,'FontName','Times New Roman')
+set(ylab,'FontSize',16,'FontName','Times New Roman')
 
 % Plot angular velocity results
 figure
-subplot(3,3,1)
+subplot(6,3,[1 4])
 plot(t_cntr,sign(nhat1sine).*y1sine,t_cntr,nhat1sine,t_cntr,nd1sine,'--k',t_cntr,nhat1sine+3*sqrt(P1sine),'--g',t_cntr,nhat1sine-3*sqrt(P1sine),'--g')
 ylim([-120 0])
-title('Single-State Angular Velocity Results')
-ylabel('EKF Angular Velocity [rad/s]')
+ylabel('EKF','FontSize',font,'FontName','Times New Roman')
+title('Simplified Model','FontSize',font,'FontName','Times New Roman')
 grid
-subplot(3,3,[4 7])
+set(gca,'FontName','Times New Roman')
+subplot(6,3,[10 13])
 plot(t_cntr,sign(ndLsine).*yLsine,t_cntr,ndLsine,'--k')
 ylim([-120 0])
-xlabel('Time [s]'),ylabel('Lookup Table Angular Velocity [rad/s]')
+ylabel('Lookup Table','FontSize',font,'FontName','Times New Roman')
 grid
-subplot(3,3,2)
+set(gca,'FontName','Times New Roman')
+subplot(6,3,[2 5])
 plot(t_cntr,sign(nhat2KF1sine).*(y2KF1sine(1,:).'),t_cntr,nhat2KF1sine,t_cntr,nd2KF1sine,'--k',t_cntr,nhat2KF1sine+3*sqrt(squeeze(P2KF1sine(1,1,:))),'--g',t_cntr,nhat2KF1sine-3*sqrt(squeeze(P2KF1sine(1,1,:))),'--g')
 ylim([-120 0])
-title('Hydrodynamic Linear Model Angular Velocity Results')
+title('HL Model','FontSize',font,'FontName','Times New Roman')
 grid
-subplot(3,3,5)
+set(gca,'FontName','Times New Roman')
+subplot(6,3,[8 11])
 plot(t_cntr,sign(nhat2NLO1sine).*(y2NLO1sine(1,:).'),t_cntr,nhat2NLO1sine,t_cntr,nd2NLO1sine,'--k',t_cntr,nhat2NLO1sine+3*sqrt(P2NLO1sine),'--g',t_cntr,nhat2NLO1sine-3*sqrt(P2NLO1sine),'--g')
 ylim([-120 0])
-ylabel('NLO Angular Velocity [rad/s]')
+ylabel('NLO','FontSize',font,'FontName','Times New Roman')
 grid
-subplot(3,3,8)
+set(gca,'FontName','Times New Roman')
+subplot(6,3,[14 17])
 plot(t_cntr,sign(nhat2KFNLO1sine).*(y2KFNLO1sine(1,:).'),t_cntr,nhat2KFNLO1sine,t_cntr,nd2KFNLO1sine,'--k',t_cntr,nhat2KFNLO1sine+3*sqrt(squeeze(P2KFNLO1sine(1,1,:))),'--g',t_cntr,nhat2KFNLO1sine-3*sqrt(squeeze(P2KFNLO1sine(1,1,:))),'--g')
 ylim([-120 0])
-xlabel('Time [s]'),ylabel('EKFNLO Angular Velocity [rad/s]')
+ylabel('KFNLO','FontSize',font,'FontName','Times New Roman')
 grid
-subplot(3,3,3)
+set(gca,'FontName','Times New Roman')
+subplot(6,3,[3 6])
 plot(t_cntr,sign(nhat2KF2sine).*(y2KF2sine(1,:).'),t_cntr,nhat2KF2sine,t_cntr,nd2KF2sine,'--k',t_cntr,nhat2KF2sine+3*sqrt(squeeze(P2KF2sine(1,1,:))),'--g',t_cntr,nhat2KF2sine-3*sqrt(squeeze(P2KF2sine(1,1,:))),'--g')
 ylim([-120 0])
-title('Hydrodynamic Quadratic Model Angular Velocity Results')
+title('HQ Model','FontSize',font,'FontName','Times New Roman')
+legend({'Measurement','Estimate','Setpoint','3\sigma Bounds'},'Location','Northwest','FontName','Times New Roman')
 grid
-subplot(3,3,6)
+set(gca,'FontName','Times New Roman')
+subplot(6,3,[9 12])
 plot(t_cntr,sign(nhat2NLO2sine).*(y2NLO2sine(1,:).'),t_cntr,nhat2NLO2sine,t_cntr,nd2NLO2sine,'--k',t_cntr,nhat2NLO2sine+3*sqrt(P2NLO2sine),'--g',t_cntr,nhat2NLO2sine-3*sqrt(P2NLO2sine),'--g')
 ylim([-120 0])
 grid
-subplot(3,3,9)
+set(gca,'FontName','Times New Roman')
+subplot(6,3,[15 18])
 plot(t_cntr,sign(nhat2KFNLO2sine).*(y2KFNLO2sine(1,:).'),t_cntr,nhat2KFNLO2sine,t_cntr,nd2KFNLO2sine,'--k',t_cntr,nhat2KFNLO2sine+3*sqrt(squeeze(P2KFNLO2sine(1,1,:))),'--g',t_cntr,nhat2KFNLO2sine-3*sqrt(squeeze(P2KFNLO2sine(1,1,:))),'--g')
 ylim([-120 0])
-xlabel('Time [s]')
-legend('Measurement','Estimate','Setpoint','3\sigma Bounds')
+set(gca,'FontName','Times New Roman')
 grid
-suptitle('Angular Velocity Sinusoidal Response Results')
+[~,xlab] = suplabel('Time [s]');
+[~,ylab] = suplabel('Angular Velocity [rad/s]','y');
+set(xlab,'FontSize',16,'FontName','Times New Roman')
+set(ylab,'FontSize',16,'FontName','Times New Roman')
 
 % Plot fluid velocity results
 figure
@@ -507,79 +542,111 @@ hold on
 plot(t_cntr,vhat2KF1sine,'Color',[0.8500 0.3250 0.0980])
 plot(t_cntr,vhat2KF1sine+3*sqrt(squeeze(P2KF1sine(2,2,:))),'--g',t_cntr,vhat2KF1sine-3*sqrt(squeeze(P2KF1sine(2,2,:))),'--g')
 ylim([-.3 .3])
-ylabel('EKF Velocity [m/s]')
-title('Hydrodynamic Linear Model Axial Velocity Results')
+yticks(-.3:.1:.3)
+box on
+ylabel('EKF','FontSize',font,'FontName','Times New Roman')
+title('HL Model Axial Velocity','FontSize',font,'FontName','Times New Roman')
+set(gca,'FontName','Times New Roman')
 grid
 hold off
 subplot(3,4,2)
 plot(t_cntr,y2KF1sine(2,:),t_cntr,vahat2KF1sine,t_cntr,vahat2KF1sine+3*sqrt(squeeze(P2KF1sine(3,3,:))),'--g',t_cntr,vahat2KF1sine-3*sqrt(squeeze(P2KF1sine(3,3,:))),'--g')
 ylim([-.3 .3])
-title('Hydrodynamic Linear Model Ambient Velocity Results')
+yticks(-.3:.1:.3)
+title('HL Model Ambient Velocity','FontSize',font,'FontName','Times New Roman')
+set(gca,'FontName','Times New Roman')
 grid
 subplot(3,4,3)
 hold on
 plot(t_cntr,vhat2KF2sine,'Color',[0.8500 0.3250 0.0980])
 plot(t_cntr,vhat2KF2sine+3*sqrt(squeeze(P2KF2sine(2,2,:))),'--g',t_cntr,vhat2KF2sine-3*sqrt(squeeze(P2KF2sine(2,2,:))),'--g')
 ylim([-.3 .3])
-title('Hydrodynamic Quadratic Model Axial Velocity Results')
+yticks(-.3:.1:.3)
+box on
+title('HQ Model Axial Velocity','FontSize',font,'FontName','Times New Roman')
+set(gca,'FontName','Times New Roman')
 grid
 hold off
 subplot(3,4,4)
 plot(t_cntr,y2KF2sine(2,:),t_cntr,vahat2KF2sine,t_cntr,vahat2KF2sine+3*sqrt(squeeze(P2KF2sine(3,3,:))),'--g',t_cntr,vahat2KF2sine-3*sqrt(squeeze(P2KF2sine(3,3,:))),'--g')
 ylim([-.3 .3])
-title('Hydrodynamic Quadratic Model Ambient Velocity Results')
+yticks(-.3:.1:.3)
+title('HQ Model Ambient Velocity','FontSize',font,'FontName','Times New Roman')
+legend({'Measurement','Estimate','3\sigma Bounds'},'Location','Northwest','FontName','Times New Roman')
+set(gca,'FontName','Times New Roman')
 grid
 subplot(3,4,5)
 plot(t_cntr,vhat2NLO1sine,'Color',[0.8500 0.3250 0.0980])
 ylim([-.3 .3])
-ylabel('NLO Velocity [m/s]')
+yticks(-.3:.1:.3)
+ylabel('NLO','FontSize',font,'FontName','Times New Roman')
+set(gca,'FontName','Times New Roman')
 grid
 subplot(3,4,6)
 plot(t_cntr,y2NLO1sine(2,:),t_cntr,vahat2NLO1sine)
 ylim([-.3 .3])
+yticks(-.3:.1:.3)
+set(gca,'FontName','Times New Roman')
 grid
 subplot(3,4,7)
 plot(t_cntr,vhat2NLO2sine,'Color',[0.8500 0.3250 0.0980])
 ylim([-.3 .3])
+yticks(-.3:.1:.3)
+set(gca,'FontName','Times New Roman')
 grid
 subplot(3,4,8)
 plot(t_cntr,y2NLO2sine(2,:),t_cntr,vahat2NLO2sine)
 ylim([-.3 .3])
+yticks(-.3:.1:.3)
+set(gca,'FontName','Times New Roman')
 grid
 subplot(3,4,9)
 hold on
 plot(t_cntr,vhat2KFNLO1sine,'Color',[0.8500 0.3250 0.0980])
 plot(t_cntr,vhat2KFNLO1sine+3*sqrt(squeeze(P2KFNLO1sine(2,2,:))),'--g',t_cntr,vhat2KFNLO1sine-3*sqrt(squeeze(P2KFNLO1sine(2,2,:))),'--g')
 ylim([-.3 .3])
-xlabel('Time [s]'),ylabel('EKFNLO Velocity [m/s]')
+yticks(-.3:.1:.3)
+box on
+ylabel('KFNLO','FontSize',font,'FontName','Times New Roman')
+set(gca,'FontName','Times New Roman')
 grid
 hold off
 subplot(3,4,10)
 plot(t_cntr,y2KFNLO1sine(2,:),t_cntr,vahat2KFNLO1sine,t_cntr,vahat2KFNLO1sine+3*sqrt(squeeze(P2KFNLO1sine(3,3,:))),'--g',t_cntr,vahat2KFNLO1sine-3*sqrt(squeeze(P2KFNLO1sine(3,3,:))),'--g')
 ylim([-.3 .3])
-xlabel('Time [s]')
+yticks(-.3:.1:.3)
+set(gca,'FontName','Times New Roman')
 grid
 subplot(3,4,11)
 hold on
 plot(t_cntr,vhat2KFNLO2sine,'Color',[0.8500 0.3250 0.0980])
 plot(t_cntr,vhat2KFNLO2sine+3*sqrt(squeeze(P2KFNLO2sine(2,2,:))),'--g',t_cntr,vhat2KFNLO2sine-3*sqrt(squeeze(P2KFNLO2sine(2,2,:))),'--g')
 ylim([-.3 .3])
-xlabel('Time [s]')
+yticks(-.3:.1:.3)
+box on
+set(gca,'FontName','Times New Roman')
 grid
 hold off
 subplot(3,4,12)
 plot(t_cntr,y2KFNLO2sine(2,:),t_cntr,vahat2KFNLO2sine,t_cntr,vahat2KFNLO2sine+3*sqrt(squeeze(P2KFNLO2sine(3,3,:))),'--g',t_cntr,vahat2KFNLO2sine-3*sqrt(squeeze(P2KFNLO2sine(3,3,:))),'--g')
 ylim([-.3 .3])
-xlabel('Time [s]')
-legend('Measurement','Estimate','3\sigma Bounds')
+yticks(-.3:.1:.3)
+set(gca,'FontName','Times New Roman')
 grid
-suptitle('Fluid Velocity Sinusoidal Response Results')
+[~,xlab] = suplabel('Time [s]');
+[~,ylab] = suplabel('Velocity [m/s]','y');
+set(xlab,'FontSize',16,'FontName','Times New Roman')
+set(ylab,'FontSize',16,'FontName','Times New Roman')
 
 % Heatmap of errors
 figure
-heatmap({'Single-State','Hydrodynamic Linear','Hydrodynamic Quadratic'},{'EKF','NLO','EKFNLO'},sinetbl);
-xlabel('Dynamic Model'),ylabel('Estimator Type')
-title('Thrust Sinusoidal Response Normalized RMS Tracking Errors')
+heatmap({'Simplified','HL','HQ'},{'EKF','NLO','KFNLO'},sinetbl);
+caxis([.5 1.8])
+set(gca,'FontSize',font,'FontName','Times New Roman','MissingDataLabel','N/A')
+[~,yylab] = suplabel('Normalized Tracking RMSE','yy');
+set(yylab,'FontSize',font,'FontName','Times New Roman')
+% xlabel('Dynamic Model'),ylabel('Estimator Type')
+% title('Thrust Sinusoidal Response Normalized RMS Tracking Errors')
 
 %% Step 4a: Import Ramp Response Data
 
@@ -688,48 +755,58 @@ ramptbl = [rmse1 rmse2KF1 rmse2KF2;NaN rmse2NLO1 rmse2NLO2;NaN rmse2KFNLO1 rmse2
 
 % Plot thrust results
 figure
-subplot(3,3,1)
+subplot(6,3,[1 4])
 plot(t_data,T1ramp,t_data,T1f,t_data,Tdramp,'--k')
 ylim([-15 15])
-ylabel('EKF Thrust [N]')
-title('Single-State Thrust Results')
+ylabel('EKF','FontSize',font,'FontName','Times New Roman')
+title('Simplified Model','FontSize',font,'FontName','Times New Roman')
 grid
-subplot(3,3,[4 7])
+set(gca,'FontName','Times New Roman')
+subplot(6,3,[10 13])
 plot(t_data,TLramp,t_data,TLf,t_data,Tdramp,'--k')
 ylim([-15 15])
-xlabel('Time [s]'),ylabel('Lookup Table Thrust [N]')
+ylabel('Lookup Table','FontSize',font,'FontName','Times New Roman')
 grid
-subplot(3,3,2)
+set(gca,'FontName','Times New Roman')
+subplot(6,3,[2 5])
 plot(t_data,T2KF1ramp,t_data,TKF1f,t_data,Tdramp,'--k')
 ylim([-15 15])
-title('Hydrodynamic Linear Model Thrust Results')
+title('HL Model','FontSize',font,'FontName','Times New Roman')
 grid
-subplot(3,3,5)
+set(gca,'FontName','Times New Roman')
+subplot(6,3,[8 11])
 plot(t_data,T2NLO1ramp,t_data,TNLO1f,t_data,Tdramp,'--k')
 ylim([-15 15])
-ylabel('NLO Thrust [N]')
+ylabel('NLO','FontSize',font,'FontName','Times New Roman')
 grid
-subplot(3,3,8)
+set(gca,'FontName','Times New Roman')
+subplot(6,3,[14 17])
 plot(t_data,T2KFNLO1ramp,t_data,TKFNLO1f,t_data,Tdramp,'--k')
 ylim([-15 15])
-xlabel('Time [s]'),ylabel('EKFNLO Thrust [N]')
+ylabel('KFNLO','FontSize',font,'FontName','Times New Roman')
 grid
-subplot(3,3,3)
+set(gca,'FontName','Times New Roman')
+subplot(6,3,[3 6])
 plot(t_data,T2KF2ramp,t_data,TKF2f,t_data,Tdramp,'--k')
 ylim([-15 15])
-title('Hydrodynamic Quadratic Model Thrust Results')
+title('HQ Model','FontSize',font,'FontName','Times New Roman')
+legend({'Experiment','Corrected','Desired'},'Location','Northwest','FontName','Times New Roman')
 grid
-subplot(3,3,6)
+set(gca,'FontName','Times New Roman')
+subplot(6,3,[9 12])
 plot(t_data,T2NLO2ramp,t_data,TNLO2f,t_data,Tdramp,'--k')
 ylim([-15 15])
 grid
-subplot(3,3,9)
+set(gca,'FontName','Times New Roman')
+subplot(6,3,[15 18])
 plot(t_data,T2KFNLO2ramp,t_data,TKFNLO2f,t_data,Tdramp,'--k')
 ylim([-15 15])
-xlabel('Time [s]')
-legend({'Experiment','Corrected','Desired'},'Location','Southeast')
+set(gca,'FontName','Times New Roman')
 grid
-suptitle('Thrust Ramp Response Results')
+[~,xlab] = suplabel('Time [s]');
+[~,ylab] = suplabel('Thrust [N]','y');
+set(xlab,'FontSize',16,'FontName','Times New Roman')
+set(ylab,'FontSize',16,'FontName','Times New Roman')
 
 % Plot angular velocity results
 figure
@@ -853,6 +930,10 @@ suptitle('Fluid Velocity Ramp Response Results')
 
 % Heatmap of errors
 figure
-heatmap({'Single-State','Hydrodynamic Linear','Hydrodynamic Quadratic'},{'EKF','NLO','EKFNLO'},ramptbl);
-xlabel('Dynamic Model'),ylabel('Estimator Type')
-title('Thrust Ramp Response Normalized RMS Tracking Errors')
+heatmap({'Simplified','HL','HQ'},{'EKF','NLO','KFNLO'},ramptbl);
+caxis([.5 1.8])
+set(gca,'FontSize',font,'FontName','Times New Roman','MissingDataLabel','N/A')
+[~,yylab] = suplabel('Normalized Tracking RMSE','yy');
+set(yylab,'FontSize',font,'FontName','Times New Roman')
+% xlabel('Dynamic Model'),ylabel('Estimator Type')
+% title('Thrust Ramp Response Normalized RMS Tracking Errors')
